@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <script type="module" src="index.js"></script>
+        <!-- <script src="index.js"></script> -->
+        <link rel="stylesheet" href="stylesheets/style.css"/>  
+        <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico"/>
+        <div id="header">
+            <title>Agenda Médica</title>
+            <table>
+                <tbody>
+                    <tr>
+                        <td><a href="/"><img id="logo" src="assets/images/logo.svg"/></a></td>
+                        <td></td>
+                        <td><h1>Consultorio Odontológico</h1></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="menu">
+                <form action="/consultorio-odontologico-backend-node">
+                  <input type="submit" value="↺" />
+                </form>
+            </div>
+        </div>
+    </head>
+    <body>
+        <div id="contenido">
+            <div id="contenidoCitas"></div>
+            <div id="contenidoPacientes"></div>
+            <div id="contenidoDoctores"></div>
+            <div id="contenidoConsultorios"></div>
+            <div id="contenidoTratamientos"></div>
+            <div id="contenidoEspecialidades"></div>
+            <div id="contenidoEpss"></div>
+            <div id="contenidoGeneros"></div>
+            <div>
+              <hr/>
+              <h3>Procedimientos Médicos</h3>
+              <hr/>
+              <table border="1">
+                  <tr>
+                    <th>Diseño Sonrisa</th>
+                    <th>Blanqueamiento</th>
+                    <th>Ortodoncia</th>
+                    <th>Prótesis</th>
+                    <th>Higiene</th>
+                  </tr>
+                  <tr>
+                    <td><img class="tratamientos" src="assets/images/diseñosonrisa.jpg"></td>
+                    <td><img class="tratamientos" src="assets/images/blanqueamiento.jpg"></td>
+                    <td><img class="tratamientos" src="assets/images/ortodoncia.jpg"></td>
+                    <td><img class="tratamientos" src="assets/images/protesis.jpg"></td>
+                    <td><img class="tratamientos" src="assets/images/higiene.jpg"></td>
+                  </tr>  
+              </table>
+            </div>
+        </div>
+    </body>
+    <footer>
+        <div id="piepagina">
+            <p>Base de Datos API RESTful JSON</p>
+        </div>
+    </footer>

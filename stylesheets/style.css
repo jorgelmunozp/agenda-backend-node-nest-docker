@@ -1,0 +1,164 @@
+:root {
+  --dark-color: #212529;
+  --lightgray-color: #dddddd;
+  --main-color: #5285c5;
+  --main-transparent-color: rgba(82, 133, 197, 0.25);
+  --white-color: #ffffff;
+}
+
+*{
+  font: 2.5vmin 'CenturyGothic', 'Century Gothic', Arial, sans-serif;
+}
+@font-face {
+  font-family: "CenturyGothic";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../assets/fonts/CenturyGothic.ttf") format("truetype");
+}
+
+body {
+  margin: 0;
+  background-color: #ffffff;
+  font-size: 3vmin;
+}
+
+a {
+  color: var(--main-color);
+  text-decoration: none;
+}
+hr { opacity: 0.5; }
+
+/*************************** HEADER **************************/
+#header{							/***** Contenedor div del header *****/
+  background-color: var(--dark-color);
+  width:100%;
+  height: 10vmin;
+  position:static;
+  border-bottom: 1px solid var(--main-color);
+}
+
+#header table{								          /***** tabla slogan *****/
+  margin-left: auto;
+  margin-right: auto;
+}
+#header img{								          /***** Logo header *****/
+  width: 5vmin;
+}
+#header h1 {								        /***** Titulo header *****/
+  position: static;
+  margin-top: 2vmin;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--white-color);
+  font-size: 3vmin;
+}
+
+#header #fotoPerfil{                        /****** Foto perfil *****/
+  width: 30px;
+  margin-top: 35px;
+  right: 30px;
+  padding: 2px;
+  position: absolute;
+}
+#header #userPerfil{                   /****** usuario perfil *****/
+  color: darkgray;
+  right: 90px;
+  margin-top: 40px;
+  position: absolute;
+}
+#header #fecha{                        /****** fecha actual *****/
+  color: darkgray;
+  left: 40px;
+  margin-top: 40px;
+  position: absolute;
+}
+
+/*************************** MENU NAV **************************/
+nav div{
+  width:100%;
+  text-align: right;
+  margin-top: -85px;
+}
+nav div a{
+  color:var(--white-color);
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
+  font-weight: bold;
+  text-decoration: none;
+  text-align:center;
+  padding: 15px 2.5% 15px 2.5%;
+  display:inline-block;
+}
+nav div a:hover{
+  color:var(--white-color);
+  background-color:rgba(0,0,0,0.1);
+}
+
+#menu {
+  position: absolute;
+  text-align: center;
+  display: flex;
+  top: 2vmin;
+  right: 2vmin;
+}
+
+/*************************** BODY **************************/
+#contenido{
+  text-align: center;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+#contenido h3 {
+  color: var(--main-color);
+}
+#contenido div {
+  display: inline-block;
+  float: left;
+  width: 100%;
+}
+#contenido table {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  border-collapse: collapse;
+  border-color: var(--lightgray-color);
+}
+#contenido table th {
+  background-color: var(--main-color);
+  color: var(--white-color);
+  font-size: 2.2vmin;
+  padding: 0.75vmin 1vw;
+  border-bottom: 1px solid var(--dark-color);
+}
+#contenido table td {
+  color: var(--dark-color);
+  padding: 1vmin 1vmin;
+}
+#contenido table tr:nth-child(even) { background-color: var(--white-color); }
+#contenido table tr:nth-child(odd) { background-color: #f1f1f1;}
+#contenido table tr:nth-child(even):hover { background-color: var(--main-transparent-color); }
+#contenido table tr:nth-child(odd):hover { background-color: var(--main-transparent-color); }
+
+input[type=submit] {
+  color: var(--main-color);
+  background-color: transparent;
+  padding: 1.5vmin 2vmin 1.5vmin 2vmin;
+  border-radius: 100vmax;
+  font-size: 2.5vmin;
+  cursor: pointer;
+}
+input[type=submit]:hover {
+  color: var(--white-color);
+}
+
+ /*************************** FOOTER **************************/
+ #piepagina{
+  text-align: center;
+  color: var(--main-color);
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+.tratamientos {
+  width: 100%;
+}
