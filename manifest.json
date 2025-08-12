@@ -1,6 +1,6 @@
 {
-  "short_name": "Consultorio Odontológico",
-  "name": "Citas Médicas Servidor",
+  "short_name": "API Restful",
+  "name": "API Restful App",
   "icons": [
     {
       "src": "favicon.ico",
