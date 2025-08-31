@@ -3,21 +3,75 @@
     {
       "user": {
         "name": "juan",
-        "id": 1061
+        "correo": "juan@gmail.com",
+        "username": "juan",
+        "password": "juan123",
+        "tareas": [
+          {
+            "nombre": "tarea1",
+            "hora": "2:00pm",
+            "fecha": "2024-06-20",
+            "mensaje": "Hacer la tarea de matemáticas",
+            "estado": "pendiente"
+          },
+          {
+            "nombre": "tarea2",
+            "hora": "8:00am",
+            "fecha": "2024-06-21",
+            "mensaje": "Llevar documentos al colegio",
+            "estado": "completado"
+          }
+        ]
       },
       "id": 1
     },
     {
       "user": {
         "name": "luis",
-        "id": 1062
+        "correo": "luis@gmail.com",
+        "username": "luis",
+        "password": "luis123",
+        "tareas": [
+          {
+            "nombre": "tarea1",
+            "hora": "2:00pm",
+            "fecha": "2024-06-20",
+            "mensaje": "Hacer la tarea de matemáticas",
+            "estado": "pendiente"
+          },
+          {
+            "nombre": "tarea2",
+            "hora": "8:00am",
+            "fecha": "2024-06-21",
+            "mensaje": "Llevar documentos al colegio",
+            "estado": "completado"
+          }
+        ]
       },
       "id": 2
     },
     {
       "user": {
-        "name": "Luisa",
-        "id": 1063
+        "name": "Ana",
+        "correo": "anas@gmail.com",
+        "username": "ana",
+        "password": "ana123",
+        "tareas": [
+          {
+            "nombre": "tarea1",
+            "hora": "2:00pm",
+            "fecha": "2024-06-20",
+            "mensaje": "Hacer la tarea de matemáticas",
+            "estado": "pendiente"
+          },
+          {
+            "nombre": "tarea2",
+            "hora": "8:00am",
+            "fecha": "2024-06-21",
+            "mensaje": "Llevar documentos al colegio",
+            "estado": "completado"
+          }
+        ]
       },
       "id": 3
     }
