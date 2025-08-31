@@ -47,85 +47,37 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
-const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
+const users_service_1 = require("./users.service");
+const dotenv = __importStar(require("dotenv"));
+dotenv.config();
+const db = 'users';
 let UsersController = class UsersController {
-    constructor() {
-        this.dataFile = path.resolve(process.cwd(), 'src/users/data.json');
+    constructor(usersService) {
+        this.usersService = usersService;
     }
-    readData() {
-        if (fs.existsSync(this.dataFile)) {
-            return JSON.parse(fs.readFileSync(this.dataFile, 'utf8'));
+    async getAllUsers() {
+        return this.usersService.getAll();
+    }
+    async getById(id) {
+        return this.usersService.getById(id);
+    }
+    async addUser(body) {
+        if (!body.name) {
+            throw new common_1.BadRequestException('Name is required');
         }
-        return { users: [] };
+        return this.usersService.create(body);
     }
-    writeData(data) {
-        fs.writeFileSync(this.dataFile, JSON.stringify(data, null, 2));
+    async deleteUser(id) {
+        return this.usersService.delete(id);
     }
-    getAllUsers() {
-        const fileContent = this.readData();
-        return fileContent.users || [];
+    async patchUser(id, body) {
+        return this.usersService.patch(id, body);
     }
-    getById(id) {
-        const data = this.readData();
-        const record = data.users.find((u) => Number(u.id) === Number(id));
-        if (!record)
-            throw new common_1.NotFoundException(`User with id ${id} not found`);
-        return record;
-    }
-    addUser(body) {
-        const { name, id } = body;
-        if (!name || typeof id !== 'number') {
-            throw new common_1.BadRequestException('Name (string) and id (number) are required');
+    async updateUser(id, body) {
+        if (!body.name) {
+            throw new common_1.BadRequestException('Name is required');
         }
-        const data = this.readData();
-        const newRecordId = data.users.length
-            ? Number(data.users[data.users.length - 1].id) + 1
-            : 1;
-        const newUser = {
-            user: { name, id },
-            id: newRecordId
-        };
-        data.users.push(newUser);
-        this.writeData(data);
-        return { message: 'User added successfully', user: newUser };
-    }
-    deleteUser(id) {
-        const data = this.readData();
-        const index = data.users.findIndex((u) => Number(u.id) === Number(id));
-        if (index === -1) {
-            throw new common_1.NotFoundException(`User with id ${id} not found`);
-        }
-        const deletedUser = data.users.splice(index, 1)[0];
-        this.writeData(data);
-        return { message: 'User deleted successfully', user: deletedUser };
-    }
-    patchUser(id, body) {
-        const data = this.readData();
-        const index = data.users.findIndex((u) => Number(u.id) === Number(id));
-        if (index === -1) {
-            throw new common_1.NotFoundException(`User with id ${id} not found`);
-        }
-        data.users[index].user = { ...data.users[index].user, ...body };
-        this.writeData(data);
-        return { message: 'User updated partially', user: data.users[index] };
-    }
-    updateUser(id, body) {
-        const { name, id: userId } = body;
-        if (!name || typeof userId !== 'number') {
-            throw new common_1.BadRequestException('Name (string) and userId (number) are required');
-        }
-        const data = this.readData();
-        const index = data.users.findIndex((u) => Number(u.id) === Number(id));
-        if (index === -1) {
-            throw new common_1.NotFoundException(`User with id ${id} not found`);
-        }
-        data.users[index] = {
-            user: { name, id: userId },
-            id: Number(id)
-        };
-        this.writeData(data);
-        return { message: 'User updated completely', user: data.users[index] };
+        return this.usersService.update(id, body);
     }
 };
 exports.UsersController = UsersController;
@@ -133,28 +85,28 @@ __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getAllUsers", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getById", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "addUser", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "deleteUser", null);
 __decorate([
     (0, common_1.Patch)(':id'),
@@ -162,7 +114,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "patchUser", null);
 __decorate([
     (0, common_1.Put)(':id'),
@@ -170,9 +122,10 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUser", null);
 exports.UsersController = UsersController = __decorate([
-    (0, common_1.Controller)('users')
+    (0, common_1.Controller)(db),
+    __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
 //# sourceMappingURL=users.controller.js.map

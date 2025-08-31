@@ -1,5 +1,5 @@
 import { MongoClient, ServerApiVersion, Db } from "mongodb";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 
 dotenv.config();
 

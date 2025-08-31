@@ -41,38 +41,61 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
-const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
+const connectDB_1 = require("../database/connectDB");
+const mongodb_1 = require("mongodb");
+const dotenv = __importStar(require("dotenv"));
+dotenv.config();
+const dbCollection = 'user';
+if (!dbCollection) {
+    throw new Error("❌ Faltan variables de entorno para la conexión a MongoDB");
+}
 let UsersService = class UsersService {
     constructor() {
-        this.filePath = path.join(__dirname, 'data.json');
+        this.collectionName = dbCollection;
     }
-    readFile() {
-        if (!fs.existsSync(this.filePath)) {
-            fs.writeFileSync(this.filePath, JSON.stringify([]));
-        }
-        const content = fs.readFileSync(this.filePath, 'utf8');
-        return JSON.parse(content);
+    async getCollection() {
+        const db = await (0, connectDB_1.connectDB)();
+        return db.collection(this.collectionName);
     }
-    writeFile(data) {
-        fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2));
+    async getAll() {
+        const collection = await this.getCollection();
+        return collection.find().toArray();
     }
-    getAll() {
-        return this.readFile();
-    }
-    create(user) {
-        const data = this.readFile();
-        user.id = Date.now();
-        data.push(user);
-        this.writeFile(data);
+    async getById(id) {
+        const collection = await this.getCollection();
+        const user = await collection.findOne({ _id: new mongodb_1.ObjectId(id) });
+        if (!user)
+            throw new common_1.NotFoundException(`User with id ${id} not found`);
         return user;
     }
-    delete(id) {
-        let data = this.readFile();
-        const originalLength = data.length;
-        data = data.filter(u => u.id !== id);
-        this.writeFile(data);
-        return data.length < originalLength;
+    async create(user) {
+        const collection = await this.getCollection();
+        const result = await collection.insertOne(user);
+        return { ...user, _id: result.insertedId };
+    }
+    async delete(id) {
+        const collection = await this.getCollection();
+        const result = await collection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+        if (result.deletedCount === 0) {
+            throw new common_1.NotFoundException(`User with id ${id} not found`);
+        }
+        return { message: 'User deleted successfully' };
+    }
+    async update(id, body) {
+        const collection = await this.getCollection();
+        const result = await collection.replaceOne({ _id: new mongodb_1.ObjectId(id) }, body);
+        if (result.matchedCount === 0) {
+            throw new common_1.NotFoundException(`User with id ${id} not found`);
+        }
+        return { message: 'User updated completely', user: { _id: id, ...body } };
+    }
+    async patch(id, body) {
+        const collection = await this.getCollection();
+        const result = await collection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: body });
+        if (result.matchedCount === 0) {
+            throw new common_1.NotFoundException(`User with id ${id} not found`);
+        }
+        return { message: 'User updated partially' };
     }
 };
 exports.UsersService = UsersService;

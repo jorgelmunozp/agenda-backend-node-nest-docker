@@ -1,40 +1,71 @@
-import { Injectable } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { connectDB } from '../database/connectDB';
+import { ObjectId } from 'mongodb';
+import * as dotenv from "dotenv";
+
+dotenv.config();
+const dbCollection = 'user';
+// const dbCollection: string | undefined = process.env.DB_COLLECTION;
+
+
+if (!dbCollection) {
+  throw new Error("❌ Faltan variables de entorno para la conexión a MongoDB");
+}
 
 @Injectable()
 export class UsersService {
-  private readonly filePath = path.join(__dirname, 'data.json');
+  private readonly collectionName = dbCollection;
 
-  private readFile(): any[] {
-    if (!fs.existsSync(this.filePath)) {
-      fs.writeFileSync(this.filePath, JSON.stringify([]));
-    }
-    const content = fs.readFileSync(this.filePath, 'utf8');
-    return JSON.parse(content);
+  private async getCollection() {
+    const db = await connectDB();
+    return db.collection(this.collectionName);
   }
 
-  private writeFile(data: any[]): void {
-    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2));
+  async getAll() {
+    const collection = await this.getCollection();
+    return collection.find().toArray();
   }
 
-  getAll(): any[] {
-    return this.readFile();
-  }
-
-  create(user: any): any {
-    const data = this.readFile();
-    user.id = Date.now(); // simple ID
-    data.push(user);
-    this.writeFile(data);
+  async getById(id: string) {
+    const collection = await this.getCollection();
+    const user = await collection.findOne({ _id: new ObjectId(id) });
+    if (!user) throw new NotFoundException(`User with id ${id} not found`);
     return user;
   }
 
-  delete(id: number): boolean {
-    let data = this.readFile();
-    const originalLength = data.length;
-    data = data.filter(u => u.id !== id);
-    this.writeFile(data);
-    return data.length < originalLength;
+  async create(user: any) {
+    const collection = await this.getCollection();
+    const result = await collection.insertOne(user);
+    return { ...user, _id: result.insertedId };
+  }
+
+  async delete(id: string) {
+    const collection = await this.getCollection();
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return { message: 'User deleted successfully' };
+  }
+
+  async update(id: string, body: any) {
+    const collection = await this.getCollection();
+    const result = await collection.replaceOne({ _id: new ObjectId(id) }, body);
+    if (result.matchedCount === 0) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return { message: 'User updated completely', user: { _id: id, ...body } };
+  }
+
+  async patch(id: string, body: any) {
+    const collection = await this.getCollection();
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: body }
+    );
+    if (result.matchedCount === 0) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return { message: 'User updated partially' };
   }
 }
