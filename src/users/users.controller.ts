@@ -6,7 +6,6 @@ dotenv.config();
 const db = 'users';
 // const db: string | undefined = process.env.DB;
 
-
 @Controller(db)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

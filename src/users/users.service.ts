@@ -7,11 +7,6 @@ dotenv.config();
 const dbCollection = 'user';
 // const dbCollection: string | undefined = process.env.DB_COLLECTION;
 
-
-if (!dbCollection) {
-  throw new Error("❌ Faltan variables de entorno para la conexión a MongoDB");
-}
-
 @Injectable()
 export class UsersService {
   private readonly collectionName = dbCollection;
