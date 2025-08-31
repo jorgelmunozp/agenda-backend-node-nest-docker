@@ -1,0 +1,15 @@
+# Ignorar dependencias locales
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Carpeta de compilación
+dist
+
+# Archivos del sistema
+.DS_Store
+.idea
+.vscode
+
+# Variables de entorno
+.env
