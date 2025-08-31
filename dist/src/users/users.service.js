@@ -46,9 +46,6 @@ const mongodb_1 = require("mongodb");
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const dbCollection = 'user';
-if (!dbCollection) {
-    throw new Error("❌ Faltan variables de entorno para la conexión a MongoDB");
-}
 let UsersService = class UsersService {
     constructor() {
         this.collectionName = dbCollection;
