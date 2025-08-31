@@ -22,7 +22,7 @@ let db = null;
 async function connectDB() {
     if (!db) {
         await client.connect();
-        db = client.db("consultorio");
+        db = client.db("users");
         console.log("✅ Conectado a MongoDB Atlas");
     }
     return db;

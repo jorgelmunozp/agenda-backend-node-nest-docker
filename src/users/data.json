@@ -9,15 +9,15 @@
         "tareas": [
           {
             "nombre": "tarea1",
-            "hora": "2:00pm",
-            "fecha": "2024-06-20",
+            "hora": "02:00pm",
+            "fecha": "2025-06-20",
             "mensaje": "Hacer la tarea de matemáticas",
             "estado": "pendiente"
           },
           {
             "nombre": "tarea2",
-            "hora": "8:00am",
-            "fecha": "2024-06-21",
+            "hora": "08:00am",
+            "fecha": "2025-06-21",
             "mensaje": "Llevar documentos al colegio",
             "estado": "completado"
           }
@@ -34,16 +34,16 @@
         "tareas": [
           {
             "nombre": "tarea1",
-            "hora": "2:00pm",
-            "fecha": "2024-06-20",
-            "mensaje": "Hacer la tarea de matemáticas",
+            "hora": "04:00pm",
+            "fecha": "2025-07-20",
+            "mensaje": "Hacer la tarea de español",
             "estado": "pendiente"
           },
           {
             "nombre": "tarea2",
-            "hora": "8:00am",
-            "fecha": "2024-06-21",
-            "mensaje": "Llevar documentos al colegio",
+            "hora": "07:00am",
+            "fecha": "2025-07-21",
+            "mensaje": "Llevar documentos a la universidad",
             "estado": "completado"
           }
         ]
@@ -59,16 +59,16 @@
         "tareas": [
           {
             "nombre": "tarea1",
-            "hora": "2:00pm",
-            "fecha": "2024-06-20",
-            "mensaje": "Hacer la tarea de matemáticas",
+            "hora": "12:00pm",
+            "fecha": "2025-08-20",
+            "mensaje": "Hacer la tarea de sociales",
             "estado": "pendiente"
           },
           {
             "nombre": "tarea2",
-            "hora": "8:00am",
-            "fecha": "2024-06-21",
-            "mensaje": "Llevar documentos al colegio",
+            "hora": "09:00am",
+            "fecha": "2025-08-21",
+            "mensaje": "Hacer la matricula de la universidad",
             "estado": "completado"
           }
         ]

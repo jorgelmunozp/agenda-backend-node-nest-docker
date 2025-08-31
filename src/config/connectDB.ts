@@ -23,7 +23,7 @@ let db: Db | null = null;
 export async function connectDB(): Promise<Db> {
   if (!db) {
     await client.connect();
-    db = client.db("consultorio");
+    db = client.db("users");
     console.log("✅ Conectado a MongoDB Atlas");
   }
   return db;

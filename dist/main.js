@@ -9,7 +9,6 @@ async function bootstrap() {
     const db = await (0, connectDB_1.connectDB)();
     console.log(`🚀 Server running on http://localhost:3000`);
     console.log(`✅ Database connected: ${db.databaseName}`);
-    console.log(`✅ Database: ${db.collections}`);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
