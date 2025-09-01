@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node dist/main.js",
+    "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
     "build": "nest build",
@@ -14,7 +14,6 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
-    "chalk": "4.1.2",
     "dotenv": "^16.4.5",
     "mongodb": "^6.19.0",
     "reflect-metadata": "^0.1.13",
@@ -25,14 +24,5 @@
     "@nestjs/cli": "^11.0.10",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0"
-  },
-  "engines": {
-    "node": "18.10.0"
-  },
-  "overrides": {
-    "chalk": "4.1.2"
-  },
-  "resolutions": {
-    "chalk": "4.1.2"
   }
 }
