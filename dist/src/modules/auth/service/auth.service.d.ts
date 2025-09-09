@@ -1,15 +1,12 @@
-import { AuthRepository } from '../repository/auth.repository';
+import { HttpService } from '@nestjs/axios';
 export declare class AuthService {
-    private readonly authRepository;
-    constructor(authRepository: AuthRepository);
+    private readonly httpService;
+    constructor(httpService: HttpService);
     login(loginDto: {
         username: string;
         password: string;
     }): Promise<{
         message: string;
-        user: {
-            username: string;
-            password: string;
-        };
+        user: any;
     }>;
 }

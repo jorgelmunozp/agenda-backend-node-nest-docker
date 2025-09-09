@@ -8,16 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
+const axios_1 = require("@nestjs/axios");
 const auth_controller_1 = require("./controller/auth.controller");
 const auth_service_1 = require("./service/auth.service");
-const auth_repository_1 = require("./repository/auth.repository");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
+        imports: [axios_1.HttpModule],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService, auth_repository_1.AuthRepository]
+        providers: [auth_service_1.AuthService]
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

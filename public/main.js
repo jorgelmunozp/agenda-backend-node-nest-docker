@@ -18,15 +18,13 @@ form.addEventListener("submit", (event) => __awaiter(void 0, void 0, void 0, fun
         password: passwordInput.value,
     };
     try {
-        // const response = await fetch("http://localhost:3000/auth/login", {
-        const response = yield fetch("http://localhost:3000/users", {
+        const response = yield fetch("http://localhost:3000/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
         });
-        console.log(response);
         if (!response.ok) {
             throw new Error(`Error en la petición: ${response.status}`);
         }

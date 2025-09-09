@@ -11,22 +11,38 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
-const auth_repository_1 = require("../repository/auth.repository");
+const axios_1 = require("@nestjs/axios");
+const rxjs_1 = require("rxjs");
 let AuthService = class AuthService {
-    constructor(authRepository) {
-        this.authRepository = authRepository;
+    constructor(httpService) {
+        this.httpService = httpService;
     }
     async login(loginDto) {
-        const user = await this.authRepository.findByUsername(loginDto.username);
-        if (!user || user.password !== loginDto.password) {
-            throw new common_1.UnauthorizedException('Usuario o contraseña incorrecta');
+        const url = 'http://localhost:3000/users';
+        try {
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(url));
+            const users = response.data;
+            if (!Array.isArray(users)) {
+                throw new common_1.UnauthorizedException('Respuesta inválida del servidor');
+            }
+            const found = users.find((u) => u.user?.username === loginDto.username);
+            if (!found) {
+                throw new common_1.UnauthorizedException('Usuario o contraseña incorrecta');
+            }
+            if (found.user.password !== loginDto.password) {
+                throw new common_1.UnauthorizedException('Usuario o contraseña incorrecta');
+            }
+            return { message: 'Login correctamente', user: found.user };
         }
-        return { message: 'Login correctamente', user };
+        catch (error) {
+            console.error('Error consultando /users:', error);
+            throw new common_1.UnauthorizedException('No se pudo validar el usuario');
+        }
     }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [auth_repository_1.AuthRepository])
+    __metadata("design:paramtypes", [axios_1.HttpService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map
