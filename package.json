@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && npm run build:client",
     "build:client": "tsc -p tsconfig.frontend.json",
     "watch:client": "tsc -p tsconfig.frontend.json --watch",
     "start": "nest start",
