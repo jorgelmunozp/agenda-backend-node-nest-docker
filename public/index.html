@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Iniciar Sesión</h1>
+    <form id="login-form" class="form">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" placeholder="Ingresa tu usuario" required />
+      </div>
 
-    <title>API Restful</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root">
-        <h1>API Restful</h1>
-        <p>API Restful in Nest Js over Node Js</p>
-    </div>
-  </body>
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="Ingresa tu contraseña" required />
+      </div>
+
+      <button type="submit" class="btn">Entrar</button>
+    </form>
+  </div>
+
+  <!-- 🔑 Carga como módulo ES (por tu tsconfig) -->
+  <script type="module" src="./main.js"></script>
+</body>
 </html>

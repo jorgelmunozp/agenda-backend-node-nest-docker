@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",              // Código moderno para navegadores
+    "module": "ES6",              // Usa módulos ES
+    "outDir": "public",           // Carpeta de salida para el JS compilado
+    "rootDir": "src/frontend",    // Carpeta donde está el TS del cliente
+    "strict": true,               // Activa tipado estricto
+    "esModuleInterop": true,      // Mejor compatibilidad con imports de libs JS
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/frontend/**/*"]
+}

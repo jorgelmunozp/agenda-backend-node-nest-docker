@@ -6,24 +6,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.AuthRepository = void 0;
 const common_1 = require("@nestjs/common");
-const serve_static_1 = require("@nestjs/serve-static");
-const path_1 = require("path");
-const auth_module_1 = require("./src/modules/auth/auth.module");
-const users_module_1 = require("./src/modules/users/users.module");
-let AppModule = class AppModule {
+let AuthRepository = class AuthRepository {
+    constructor() {
+        this.users = [
+            { username: 'admin', password: '1234' },
+            { username: 'user', password: 'abcd' },
+        ];
+    }
+    async findByUsername(username) {
+        return this.users.find(user => user.username === username);
+    }
 };
-exports.AppModule = AppModule;
-exports.AppModule = AppModule = __decorate([
-    (0, common_1.Module)({
-        imports: [
-            serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.join)(__dirname, '..', 'public'),
-            }),
-            auth_module_1.AuthModule,
-            users_module_1.UsersModule,
-        ],
-    })
-], AppModule);
-//# sourceMappingURL=app.module.js.map
+exports.AuthRepository = AuthRepository;
+exports.AuthRepository = AuthRepository = __decorate([
+    (0, common_1.Injectable)()
+], AuthRepository);
+//# sourceMappingURL=auth.repository.js.map

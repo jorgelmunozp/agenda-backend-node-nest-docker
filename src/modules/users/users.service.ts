@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { connectDB } from '../database/connectDB';
+import { connectDB } from '../../database/connectDB';
 import { ObjectId } from 'mongodb';
 import * as dotenv from "dotenv";
 
