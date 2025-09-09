@@ -7,7 +7,7 @@ async function bootstrap() {
   app.enableCors();                 // Habilitamos CORS para que el frontend pueda llamar a la API sin problemas
   // app.setGlobalPrefix('api');      // Opcional: prefijo global de rutas (si quieres que todas empiecen con /api)
 
-  await app.listen(process.env.PORT || 3000);
-  console.log(`🚀 Server running on http://localhost:${process.env.PORT || 3000}`);
+  await app.listen(3000);
+  console.log(`🚀 Server running on http://localhost:3000`);
 }
 bootstrap();

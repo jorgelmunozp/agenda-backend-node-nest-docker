@@ -10,14 +10,5 @@ export class AuthController {
   async login(@Body() loginDto: { username: string; password: string }) {
     console.log('Login recibido:', loginDto);
     return this.authService.login(loginDto);
-    
-    
-  // async function bootstrap() {
-  //   app.useGlobalPipes(new ValidationPipe({
-  //     transform: true,
-  //     whitelist: true,
-  //     forbidNonWhitelisted: true
-  //   }))
-  // }
   }
 }
