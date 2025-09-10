@@ -94,7 +94,7 @@ export class UsersController {
     return updatedUser;
   }
 
-  // Service: Get a Task of a user by id
+  // Service: Get a Task from a user by id
   @Get(':userId/tasks/:taskId')
   async getTaskById( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
     this.ensureValidObjectId(userId);
@@ -135,7 +135,7 @@ export class UsersController {
     return updatedUser;
   }
 
-  // Service: Get a Reminder of a user by id
+  // Service: Get a Reminder from a user by id
   @Get(':userId/reminders/:reminderId')
   async getReminderById( @Param('userId') userId: string, @Param('reminderId') reminderId: string ) {
     this.ensureValidObjectId(userId);
