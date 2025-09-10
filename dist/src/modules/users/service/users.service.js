@@ -66,9 +66,9 @@ let UsersService = class UsersService {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
         return doc;
     }
-    async create(user) {
+    async create(createUserDto) {
         const collection = await this.getCollection();
-        const newUser = { user };
+        const newUser = { user: createUserDto };
         const result = await collection.insertOne(newUser);
         return { _id: result.insertedId, ...newUser };
     }
@@ -132,14 +132,14 @@ let UsersService = class UsersService {
             to: correo,
             subject: "Recuperación de contraseña",
             html: `
-      <h2>Hola ${nombre},</h2>
-      <p>Hemos recibido una solicitud de recuperación de contraseña para tu cuenta.</p>
-      <p><strong>Usuario:</strong> ${username}</p>
-      <p><strong>Contraseña actual:</strong> ${password}</p>
-      <br />
-      <p>Si no solicitaste esta información, puedes ignorar este mensaje.</p>
-      <p style="color: gray; font-size: 12px;">Este es un correo generado automáticamente, no respondas a este mensaje.</p>
-    `,
+        <h2>Hola ${nombre},</h2>
+        <p>Hemos recibido una solicitud de recuperación de contraseña para tu cuenta.</p>
+        <p><strong>Usuario:</strong> ${username}</p>
+        <p><strong>Contraseña actual:</strong> ${password}</p>
+        <br />
+        <p>Si no solicitaste esta información, puedes ignorar este mensaje.</p>
+        <p style="color: gray; font-size: 12px;">Este es un correo generado automáticamente, no respondas a este mensaje.</p>
+      `,
         });
         console.log(`📧 Correo con contraseña enviado a ${correo}:`, info.messageId);
         return { message: "Correo de recuperación enviado con la contraseña actual" };

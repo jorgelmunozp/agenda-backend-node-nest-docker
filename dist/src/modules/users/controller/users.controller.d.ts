@@ -6,7 +6,7 @@ export declare class UsersController {
     getAllUsers(): Promise<import("mongodb").WithId<import("bson").Document>[]>;
     getById(id: string): Promise<import("mongodb").WithId<import("bson").Document>>;
     addUser(body: any): Promise<{
-        user: any;
+        user: import("../dto/create-user.dto").CreateUserDto;
         _id: ObjectId;
     }>;
     deleteUser(id: string): Promise<{
@@ -17,7 +17,27 @@ export declare class UsersController {
     }>;
     updateUser(id: string, body: any): Promise<{
         message: string;
-        user: any;
+        user: {
+            name: string;
+            correo: string;
+            username: string;
+            password: string;
+            tareas?: {
+                nombre: string;
+                hora: string;
+                fecha: string;
+                mensaje: string;
+                estado: string;
+            }[];
+            recordatorios?: {
+                nombre: string;
+                hora: string;
+                fecha: string;
+                mensaje: string;
+                estado: string;
+            }[];
+            _id: string;
+        };
     }>;
     addTaskToUser(id: string, tareaDto: any): Promise<{
         message: string;
@@ -26,10 +46,10 @@ export declare class UsersController {
         message: string;
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
-    private ensureValidObjectId;
     recoverPassword(body: {
         correo: string;
     }): Promise<{
         message: string;
     }>;
+    private ensureValidObjectId;
 }

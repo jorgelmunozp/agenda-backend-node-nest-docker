@@ -60,25 +60,41 @@ let UsersController = class UsersController {
         return this.usersService.getAll();
     }
     async getById(id) {
+        this.ensureValidObjectId(id);
         return this.usersService.getById(id);
     }
     async addUser(body) {
-        if (!body.name) {
+        if (!body.name)
             throw new common_1.BadRequestException('Name is required');
-        }
-        console.log("Usuario registrado: ", body);
-        return this.usersService.create(body);
+        if (!body.correo)
+            throw new common_1.BadRequestException('Correo is required');
+        if (!body.username)
+            throw new common_1.BadRequestException('Username is required');
+        if (!body.password)
+            throw new common_1.BadRequestException('Password is required');
+        const userData = {
+            name: body.name,
+            correo: body.correo,
+            username: body.username,
+            password: body.password,
+            tareas: Array.isArray(body.tareas) ? body.tareas : [],
+            recordatorios: Array.isArray(body.recordatorios) ? body.recordatorios : []
+        };
+        console.log("📌 Usuario registrado:", userData);
+        return this.usersService.create(userData);
     }
     async deleteUser(id) {
+        this.ensureValidObjectId(id);
         return this.usersService.delete(id);
     }
     async patchUser(id, body) {
+        this.ensureValidObjectId(id);
         return this.usersService.patch(id, body);
     }
     async updateUser(id, body) {
-        if (!body.name) {
+        this.ensureValidObjectId(id);
+        if (!body.name)
             throw new common_1.BadRequestException('Name is required');
-        }
         return this.usersService.update(id, body);
     }
     async addTaskToUser(id, tareaDto) {
@@ -90,19 +106,18 @@ let UsersController = class UsersController {
         if (!updatedUser) {
             throw new common_1.NotFoundException(`No se encontró un usuario con id ${id}`);
         }
-        console.log(`Nueva tarea agregada al usuario ${id}:`, JSON.stringify(tareaDto, null, 2));
+        console.log(`✅ Nueva tarea agregada al usuario ${id}:`, JSON.stringify(tareaDto, null, 2));
         return updatedUser;
+    }
+    async recoverPassword(body) {
+        if (!body.correo)
+            throw new common_1.BadRequestException('El correo es obligatorio');
+        return this.usersService.sendPasswordRecoveryEmail(body.correo);
     }
     ensureValidObjectId(id) {
         if (!mongodb_1.ObjectId.isValid(id)) {
             throw new common_1.BadRequestException(`El id proporcionado no es un ObjectId válido: ${id}`);
         }
-    }
-    async recoverPassword(body) {
-        if (!body.correo) {
-            throw new common_1.BadRequestException('El correo es obligatorio');
-        }
-        return this.usersService.sendPasswordRecoveryEmail(body.correo);
     }
 };
 exports.UsersController = UsersController;
