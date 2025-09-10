@@ -68,6 +68,7 @@ export class UsersService {
     return { message: 'User updated partially' };
   }
 
+  /*** SERVICIO: AÑADIR TAREA A UN USUARIO ************/
   async addTask(userId: string, tarea: any) {
     const collection = await this.getCollection();
     const result = await collection.updateOne(
@@ -89,39 +90,51 @@ export class UsersService {
     return { message: "Tarea agregada correctamente", user: updatedUser };
   }
 
-  async sendPasswordRecoveryEmail(correo: string) {
-    const collection = await this.getCollection();
-    const userDoc = await collection.findOne({ "user.correo": correo });
+/*** SERVICIO: ENVIAR CORREO DE RECUPERACION DE CONTRASEÑA ************/
+async sendPasswordRecoveryEmail(correo: string) {
+  const collection = await this.getCollection();
+  const user = await collection.findOne({ "user.correo": correo });
 
-    if (!userDoc) {
-      throw new NotFoundException(`No existe un usuario con el correo ${correo}`);
-    }
-
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${userDoc._id}`;
-
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT ?? "587"),
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    const info = await transporter.sendMail({
-      from: `"Soporte Agenda" <${process.env.SMTP_USER}>`,
-      to: correo,
-      subject: "Recuperación de contraseña",
-      html: `
-        <h1>Recuperación de contraseña</h1>
-        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-        <a href="${resetLink}">${resetLink}</a>
-      `,
-    });
-
-    console.log(`📧 Correo enviado correctamente a ${correo}: ${info.messageId}`);
-
-    return { message: "Correo de recuperación enviado", link: resetLink };
+  if (!user) {
+    throw new NotFoundException(`No existe un usuario con el correo ${correo}`);
   }
+
+  // Extraer datos del usuario
+  const nombre = user.user?.name ?? 'Usuario';
+  const username = user.user?.username ?? '(sin username)';
+  const password = user.user?.password ?? '(no definida)';
+
+  // Configurar transporter de nodemailer
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT ?? "587"),
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  // Enviar correo con saludo personalizado y la contraseña
+  const info = await transporter.sendMail({
+    from: `"Soporte Agenda" <${process.env.SMTP_USER}>`,
+    to: correo,
+    subject: "Recuperación de contraseña",
+    html: `
+      <h2>Hola ${nombre},</h2>
+      <p>Hemos recibido una solicitud de recuperación de contraseña para tu cuenta.</p>
+      <p><strong>Usuario:</strong> ${username}</p>
+      <p><strong>Contraseña actual:</strong> ${password}</p>
+      <br />
+      <p>Si no solicitaste esta información, puedes ignorar este mensaje.</p>
+      <p style="color: gray; font-size: 12px;">Este es un correo generado automáticamente, no respondas a este mensaje.</p>
+    `,
+  });
+
+  console.log(`📧 Correo con contraseña enviado a ${correo}:`, info.messageId);
+
+  return { message: "Correo de recuperación enviado con la contraseña actual" };
+}
+
+
 }

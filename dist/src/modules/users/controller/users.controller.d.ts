@@ -31,6 +31,5 @@ export declare class UsersController {
         correo: string;
     }): Promise<{
         message: string;
-        link: string;
     }>;
 }

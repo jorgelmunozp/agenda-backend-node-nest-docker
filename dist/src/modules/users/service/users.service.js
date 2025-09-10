@@ -111,11 +111,13 @@ let UsersService = class UsersService {
     }
     async sendPasswordRecoveryEmail(correo) {
         const collection = await this.getCollection();
-        const userDoc = await collection.findOne({ "user.correo": correo });
-        if (!userDoc) {
+        const user = await collection.findOne({ "user.correo": correo });
+        if (!user) {
             throw new common_1.NotFoundException(`No existe un usuario con el correo ${correo}`);
         }
-        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${userDoc._id}`;
+        const nombre = user.user?.name ?? 'Usuario';
+        const username = user.user?.username ?? '(sin username)';
+        const password = user.user?.password ?? '(no definida)';
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: parseInt(process.env.SMTP_PORT ?? "587"),
@@ -130,13 +132,17 @@ let UsersService = class UsersService {
             to: correo,
             subject: "Recuperación de contraseña",
             html: `
-        <h1>Recuperación de contraseña</h1>
-        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-        <a href="${resetLink}">${resetLink}</a>
-      `,
+      <h2>Hola ${nombre},</h2>
+      <p>Hemos recibido una solicitud de recuperación de contraseña para tu cuenta.</p>
+      <p><strong>Usuario:</strong> ${username}</p>
+      <p><strong>Contraseña actual:</strong> ${password}</p>
+      <br />
+      <p>Si no solicitaste esta información, puedes ignorar este mensaje.</p>
+      <p style="color: gray; font-size: 12px;">Este es un correo generado automáticamente, no respondas a este mensaje.</p>
+    `,
         });
-        console.log(`📧 Correo enviado correctamente a ${correo}: ${info.messageId}`);
-        return { message: "Correo de recuperación enviado", link: resetLink };
+        console.log(`📧 Correo con contraseña enviado a ${correo}:`, info.messageId);
+        return { message: "Correo de recuperación enviado con la contraseña actual" };
     }
 };
 exports.UsersService = UsersService;

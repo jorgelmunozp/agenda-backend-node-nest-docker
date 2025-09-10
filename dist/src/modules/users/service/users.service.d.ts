@@ -27,6 +27,5 @@ export declare class UsersService {
     }>;
     sendPasswordRecoveryEmail(correo: string): Promise<{
         message: string;
-        link: string;
     }>;
 }
