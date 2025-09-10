@@ -1,11 +1,9 @@
 {
-  "name": "api-nest-node-docker",
+  "name": "agenda-backend-node-nest-docker",
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "nest build && npm run build:client",
-    "build:client": "tsc -p tsconfig.frontend.json",
-    "watch:client": "tsc -p tsconfig.frontend.json --watch",
+    "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

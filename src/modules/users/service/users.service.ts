@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { connectDB } from '../../database/connectDB';
-import { ObjectId } from 'mongodb';
+import { connectDB } from '../../../database/connectDB';
+import { ObjectId, Document } from 'mongodb';
 import * as dotenv from "dotenv";
 
 dotenv.config();
 const dbCollection = 'user';
-// const dbCollection: string | undefined = process.env.DB_COLLECTION;
 
 @Injectable()
 export class UsersService {
@@ -63,4 +62,24 @@ export class UsersService {
     }
     return { message: 'User updated partially' };
   }
+
+  /**
+   * Añadir una nueva tarea al usuario
+   */
+  async addTask(userId: string, tarea: any) {
+    const collection = await this.getCollection();
+
+    const result = await collection.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      { $push: { 'user.tareas': tarea } }, // <-- aseguramos que el array correcto es 'tareas'
+      { returnDocument: 'after' }
+    );
+
+    if (!result || !result.value) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    return result.value; // Devuelve el usuario actualizado
+  }
+
 }
