@@ -6,6 +6,7 @@ import * as nodemailer from "nodemailer";
 import { CreateUserDto } from '../dto/create-user.dto';
 import { CreateTaskDto } from '../dto/create-task.dto';
 import { CreateReminderDto } from '../dto/create-reminder.dto';
+import { timestamp } from 'rxjs';
 
 dotenv.config();                      // Load environment variables
 const dbCollection = 'user';          // MongoDB collection name
@@ -77,14 +78,19 @@ export class UsersService {
     return { message: 'User updated partially' };    // Response to the API caller
   }
 
-  /*** SERVICE: ADD TASK TO A USER ************/
-async addTask(userId: string, task: CreateTaskDto) {
+  /*** SERVICE: ADD A TASK TO AN USER ************/
+  async addTask(userId: string, task: CreateTaskDto) {
     const collection = await this.getCollection();
     const objectId = new ObjectId(userId);
 
+    // Task Id
+    const userDoc = await collection.findOne({ _id: objectId });    // Obtener el usuario
+    if (!userDoc) { throw new NotFoundException(`User with id ${userId} not found`); }
+    const taskId = "t" + ((userDoc.user?.tasks?.length ?? 0) + 1);   // Calcular taskId como la longitud actual del arreglo + 1
+
     const result = await collection.updateOne(
       { _id: objectId },
-      { $push: { "user.tasks": task, } as any, }   // Se forza el tipo any porque TypeScript valida paths anidados
+      { $push: { "user.tasks": { task: task, id: taskId } } } as any // se fuerza el tipo any porque TS valida paths anidados
     );
 
     if (result.matchedCount === 0) {
@@ -101,14 +107,20 @@ async addTask(userId: string, task: CreateTaskDto) {
     return { message: "Task added successfully", user: updatedUser, };    // Response to the API caller
   }
 
-    /*** SERVICE: ADD REMINDER TO A USER ************/
-async addReminder(userId: string, reminder: CreateReminderDto) {
+  /*** SERVICE: ADD A REMINDER TO AN USER ************/
+  async addReminder(userId: string, reminder: CreateReminderDto) {
     const collection = await this.getCollection();
     const objectId = new ObjectId(userId);
 
+    // Reminder Id
+    const userDoc = await collection.findOne({ _id: objectId });    // Obtener el usuario
+    if (!userDoc) { throw new NotFoundException(`User with id ${userId} not found`); }
+    const reminderId = "r" + ((userDoc.user?.reminders?.length ?? 0) + 1);   // Calcular taskId como la longitud actual del arreglo + 1
+
     const result = await collection.updateOne(
       { _id: objectId },
-      { $push: { "user.reminders": reminder, } as any, }   // Se forza el tipo any porque TypeScript valida paths anidados
+      { $push: { "user.reminders": { reminder: reminder, id: reminderId } } } as any // se fuerza el tipo any porque TS valida paths anidados
+
     );
 
     if (result.matchedCount === 0) {
@@ -126,7 +138,7 @@ async addReminder(userId: string, reminder: CreateReminderDto) {
   }
 
   
-  /*** SERVICE: CHECL IF USERNAME OR EMAIL USER ALREADY EXISTS ************/
+  /*** SERVICE: CHECK IF USERNAME OR EMAIL USER ALREADY EXISTS ************/
   async findByEmailOrUsername(email: string, username: string) {
     const collection = await this.getCollection();
 

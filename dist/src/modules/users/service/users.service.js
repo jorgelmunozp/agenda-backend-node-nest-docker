@@ -99,7 +99,12 @@ let UsersService = class UsersService {
     async addTask(userId, task) {
         const collection = await this.getCollection();
         const objectId = new mongodb_1.ObjectId(userId);
-        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.tasks": task, }, });
+        const userDoc = await collection.findOne({ _id: objectId });
+        if (!userDoc) {
+            throw new common_1.NotFoundException(`User with id ${userId} not found`);
+        }
+        const taskId = "t" + ((userDoc.user?.tasks?.length ?? 0) + 1);
+        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.tasks": { task: task, id: taskId } } });
         if (result.matchedCount === 0) {
             throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
@@ -113,7 +118,12 @@ let UsersService = class UsersService {
     async addReminder(userId, reminder) {
         const collection = await this.getCollection();
         const objectId = new mongodb_1.ObjectId(userId);
-        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.reminders": reminder, }, });
+        const userDoc = await collection.findOne({ _id: objectId });
+        if (!userDoc) {
+            throw new common_1.NotFoundException(`User with id ${userId} not found`);
+        }
+        const reminderId = "r" + ((userDoc.user?.reminders?.length ?? 0) + 1);
+        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.reminders": { reminder: reminder, id: reminderId } } });
         if (result.matchedCount === 0) {
             throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
@@ -136,7 +146,6 @@ let UsersService = class UsersService {
             result.email = true;
         if (existingData.user.username === username)
             result.username = true;
-        console.log("Existing data found:", result);
         return result;
     }
     async sendPasswordRecoveryEmail(email) {

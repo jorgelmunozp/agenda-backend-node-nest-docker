@@ -3,5 +3,5 @@ export class CreateTaskDto {
   time: string;
   date: string;
   message: string;
-  state: string;
+  completed: boolean;
 }

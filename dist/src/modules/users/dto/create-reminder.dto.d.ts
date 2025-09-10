@@ -3,5 +3,5 @@ export declare class CreateReminderDto {
     time: string;
     date: string;
     message: string;
-    state: string;
+    completed: boolean;
 }

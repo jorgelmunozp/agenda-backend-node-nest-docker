@@ -10,6 +10,7 @@ const db = 'users';               // Database route for this controller
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+//************************** USERS *************************************/
   @Get()
   async getAllUsers() {
     return this.usersService.getAll();
@@ -72,7 +73,8 @@ export class UsersController {
     return this.usersService.update(id, body);
   }
 
-  // Service: Add a task to a user
+//************************** TASKS *************************************/
+  // Service: Add a Task to a user
   @Post(':id/tasks')
   async addTaskToUser(@Param('id') id: string, @Body() taskDto: any) {
     this.ensureValidObjectId(id);
@@ -92,7 +94,28 @@ export class UsersController {
     return updatedUser;
   }
 
-  // Service: Add a reminder to a user
+  // Service: Get a Task of a user by id
+  @Get(':userId/tasks/:taskId')
+  async getTaskById( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
+    this.ensureValidObjectId(userId);
+
+    // Obtener el usuario
+    const user = await this.usersService.getById(userId);
+    if (!user) {
+      throw new NotFoundException(`No user with id found ${userId}`);
+    }
+
+    // Buscar la tarea dentro del arreglo
+    const task = user.user.tasks.find((t: any) => t.id === taskId);
+    if (!task) {
+      throw new NotFoundException(`No task with id found ${taskId} for user ${userId}`);
+    }
+
+    return task;
+  }
+
+//************************** REMINDERS *************************************/
+  // Service: Add a Reminder to a user
   @Post(':id/reminders')
   async addReminderToUser(@Param('id') id: string, @Body() reminderDto: any) {
     this.ensureValidObjectId(id);
@@ -112,6 +135,27 @@ export class UsersController {
     return updatedUser;
   }
 
+  // Service: Get a Reminder of a user by id
+  @Get(':userId/reminders/:reminderId')
+  async getReminderById( @Param('userId') userId: string, @Param('reminderId') reminderId: string ) {
+    this.ensureValidObjectId(userId);
+
+    // Obtener el usuario
+    const user = await this.usersService.getById(userId);
+    if (!user) {
+      throw new NotFoundException(`No user with id found ${userId}`);
+    }
+
+    // Buscar la tarea dentro del arreglo
+    const reminder = user.user.reminders.find((r: any) => r.id === reminderId);
+    if (!reminder) {
+      throw new NotFoundException(`No reminder with id found ${reminderId} for user ${userId}`);
+    }
+
+    return reminder;
+  }
+
+//************************** PASSWORD RECOVERY *************************************/
   // Service: Send password recovery email
   @Post('recover-password')
   async recoverPassword(@Body() body: { email: string }) {

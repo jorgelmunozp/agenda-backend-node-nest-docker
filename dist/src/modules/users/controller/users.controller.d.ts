@@ -35,6 +35,7 @@ export declare class UsersController {
         message: string;
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
+    getTaskById(userId: string, taskId: string): Promise<any>;
     addReminderToUser(id: string, reminderDto: any): Promise<{
         message: string;
         user?: undefined;
@@ -42,6 +43,7 @@ export declare class UsersController {
         message: string;
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
+    getReminderById(userId: string, reminderId: string): Promise<any>;
     recoverPassword(body: {
         email: string;
     }): Promise<{
