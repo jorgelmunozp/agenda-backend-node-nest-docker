@@ -80,6 +80,16 @@ let UsersController = class UsersController {
             tasks: Array.isArray(body.tasks) ? body.tasks : [],
             reminders: Array.isArray(body.reminders) ? body.reminders : []
         };
+        const existingData = await this.usersService.findByEmailOrUsername(body.email, body.username);
+        console.log("Existing data check:", existingData);
+        if (existingData) {
+            let message = 'The following fields already exist: ';
+            if (existingData.email)
+                message += 'email ';
+            if (existingData.username)
+                message += 'username';
+            throw new common_1.BadRequestException(message.trim());
+        }
         console.log("User successfully registered:", userData);
         return this.usersService.create(userData);
     }

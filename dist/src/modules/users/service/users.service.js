@@ -124,6 +124,21 @@ let UsersService = class UsersService {
         }
         return { message: "Reminder added successfully", user: updatedUser, };
     }
+    async findByEmailOrUsername(email, username) {
+        const collection = await this.getCollection();
+        const existingData = await collection.findOne({
+            $or: [{ 'user.email': email }, { 'user.username': username }]
+        });
+        if (!existingData)
+            return null;
+        const result = {};
+        if (existingData.user.email === email)
+            result.email = true;
+        if (existingData.user.username === username)
+            result.username = true;
+        console.log("Existing data found:", result);
+        return result;
+    }
     async sendPasswordRecoveryEmail(email) {
         const collection = await this.getCollection();
         const user = await collection.findOne({ "user.email": email });

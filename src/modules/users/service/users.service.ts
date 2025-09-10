@@ -125,6 +125,28 @@ async addReminder(userId: string, reminder: CreateReminderDto) {
     return { message: "Reminder added successfully", user: updatedUser, };    // Response to the API caller
   }
 
+  
+  /*** SERVICE: CHECL IF USERNAME OR EMAIL USER ALREADY EXISTS ************/
+  async findByEmailOrUsername(email: string, username: string) {
+    const collection = await this.getCollection();
+
+    // Buscar usuario que tenga el email o el username
+    const existingData = await collection.findOne({
+      $or: [ { 'user.email': email }, { 'user.username': username } ]
+    });
+
+    // Si no existe, retornamos null
+    if (!existingData) return null;
+
+    // Retornamos específicamente cuál campo está repetido
+    const result: { email?: boolean; username?: boolean } = {};
+    if (existingData.user.email === email) result.email = true;
+    if (existingData.user.username === username) result.username = true;
+
+    return result;
+  }
+
+
   /*** SERVICE: SEND PASSWORD RECOVERY EMAIL ************/
   async sendPasswordRecoveryEmail(email: string) {
     const collection = await this.getCollection();

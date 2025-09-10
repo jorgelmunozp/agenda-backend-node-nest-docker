@@ -44,6 +44,10 @@ export declare class UsersService {
         message: string;
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
+    findByEmailOrUsername(email: string, username: string): Promise<{
+        email?: boolean;
+        username?: boolean;
+    } | null>;
     sendPasswordRecoveryEmail(email: string): Promise<{
         message: string;
     }>;

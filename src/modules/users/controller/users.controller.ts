@@ -1,15 +1,4 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Put, 
-  Patch, 
-  Delete, 
-  Param, 
-  Body, 
-  BadRequestException, 
-  NotFoundException 
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Param, Body, BadRequestException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../service/users.service';
 import * as dotenv from "dotenv";
 import { ObjectId } from 'mongodb';
@@ -50,6 +39,16 @@ export class UsersController {
       reminders: Array.isArray(body.reminders) ? body.reminders : []
     };
 
+    // Valida si ya existe un usuario con el mismo email o username
+    const existingData = await this.usersService.findByEmailOrUsername(body.email, body.username);
+
+    if (existingData) {
+      let message = 'The following fields already exist: ';
+      if (existingData.email) message += 'email ';
+      if (existingData.username) message += 'username';
+      throw new BadRequestException(message.trim());
+    }
+  
     console.log("User successfully registered:", userData);
     return this.usersService.create(userData);
   }
