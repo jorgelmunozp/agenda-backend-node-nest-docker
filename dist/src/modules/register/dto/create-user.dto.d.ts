@@ -1,20 +1,22 @@
 export declare class CreateUserDto {
-    name: string;
-    correo: string;
-    username: string;
-    password: string;
-    tareas?: {
-        nombre: string;
-        hora: string;
-        fecha: string;
-        mensaje: string;
-        estado: string;
-    }[];
-    recordatorios?: {
-        nombre: string;
-        hora: string;
-        fecha: string;
-        mensaje: string;
-        estado: string;
-    }[];
+    user: {
+        name: string;
+        correo: string;
+        username: string;
+        password: string;
+        tareas?: {
+            nombre: string;
+            hora: string;
+            fecha: string;
+            mensaje: string;
+            estado: string;
+        }[];
+        recordatorios?: {
+            nombre: string;
+            hora: string;
+            fecha: string;
+            mensaje: string;
+            estado: string;
+        }[];
+    };
 }
