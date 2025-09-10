@@ -15,6 +15,12 @@ export declare class UsersController {
         message: string;
         user: any;
     }>;
-    addTaskToUser(id: string, tareaDto: any): Promise<any>;
+    addTaskToUser(id: string, tareaDto: any): Promise<{
+        message: string;
+        user?: undefined;
+    } | {
+        message: string;
+        user: import("mongodb").WithId<import("bson").Document>;
+    }>;
     private ensureValidObjectId;
 }

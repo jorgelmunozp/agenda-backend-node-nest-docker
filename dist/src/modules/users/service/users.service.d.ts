@@ -15,5 +15,11 @@ export declare class UsersService {
     patch(id: string, body: any): Promise<{
         message: string;
     }>;
-    addTask(userId: string, tarea: any): Promise<any>;
+    addTask(userId: string, tarea: any): Promise<{
+        message: string;
+        user?: undefined;
+    } | {
+        message: string;
+        user: import("mongodb").WithId<Document>;
+    }>;
 }

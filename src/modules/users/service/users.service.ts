@@ -67,19 +67,32 @@ export class UsersService {
    * Añadir una nueva tarea al usuario
    */
   async addTask(userId: string, tarea: any) {
-    const collection = await this.getCollection();
+  const collection = await this.getCollection();
 
-    const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(userId) },
-      { $push: { 'user.tareas': tarea } }, // <-- aseguramos que el array correcto es 'tareas'
-      { returnDocument: 'after' }
-    );
+  // primero intentamos hacer el update
+  const result = await collection.updateOne(
+    { _id: new ObjectId(userId) },
+    { $push: { "user.tareas": tarea } }
+  );
 
-    if (!result || !result.value) {
-      throw new NotFoundException(`User with id ${userId} not found`);
-    }
-
-    return result.value; // Devuelve el usuario actualizado
+  if (result.matchedCount === 0) {
+    // aquí sí es válido decir que el usuario no existe
+    throw new NotFoundException(`User with id ${userId} not found`);
   }
+
+  // si se actualizó, buscamos el usuario actualizado
+  const updatedUser = await collection.findOne({ _id: new ObjectId(userId) });
+
+  // si por alguna razón no se encuentra, no devolvemos error, solo avisamos
+  if (!updatedUser) {
+    console.warn(`La tarea se agregó, pero no se pudo recuperar el usuario con id ${userId}`);
+    return { message: "Tarea agregada correctamente, pero no se pudo devolver el usuario" };
+  }
+
+  return {
+    message: "Tarea agregada correctamente",
+    user: updatedUser
+  };
+}
 
 }

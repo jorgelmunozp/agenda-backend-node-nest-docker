@@ -96,11 +96,19 @@ let UsersService = class UsersService {
     }
     async addTask(userId, tarea) {
         const collection = await this.getCollection();
-        const result = await collection.findOneAndUpdate({ _id: new mongodb_1.ObjectId(userId) }, { $push: { 'user.tareas': tarea } }, { returnDocument: 'after' });
-        if (!result || !result.value) {
+        const result = await collection.updateOne({ _id: new mongodb_1.ObjectId(userId) }, { $push: { "user.tareas": tarea } });
+        if (result.matchedCount === 0) {
             throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
-        return result.value;
+        const updatedUser = await collection.findOne({ _id: new mongodb_1.ObjectId(userId) });
+        if (!updatedUser) {
+            console.warn(`⚠️ La tarea se agregó, pero no se pudo recuperar el usuario con id ${userId}`);
+            return { message: "Tarea agregada correctamente, pero no se pudo devolver el usuario" };
+        }
+        return {
+            message: "Tarea agregada correctamente",
+            user: updatedUser
+        };
     }
 };
 exports.UsersService = UsersService;

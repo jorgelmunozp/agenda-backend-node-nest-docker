@@ -63,7 +63,7 @@ export class UsersController {
       throw new NotFoundException(`No se encontró un usuario con id ${id}`);
     }
 
-    console.log(`✅ Nueva tarea agregada al usuario ${id}:`, JSON.stringify(tareaDto, null, 2));
+    console.log(`Nueva tarea agregada al usuario ${id}:`, JSON.stringify(tareaDto, null, 2));
 
     return updatedUser;
   }
