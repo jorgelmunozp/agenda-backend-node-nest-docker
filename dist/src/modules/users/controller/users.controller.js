@@ -66,21 +66,21 @@ let UsersController = class UsersController {
     async addUser(body) {
         if (!body.name)
             throw new common_1.BadRequestException('Name is required');
-        if (!body.correo)
-            throw new common_1.BadRequestException('Correo is required');
+        if (!body.email)
+            throw new common_1.BadRequestException('Email is required');
         if (!body.username)
             throw new common_1.BadRequestException('Username is required');
         if (!body.password)
             throw new common_1.BadRequestException('Password is required');
         const userData = {
             name: body.name,
-            correo: body.correo,
+            email: body.email,
             username: body.username,
             password: body.password,
-            tareas: Array.isArray(body.tareas) ? body.tareas : [],
-            recordatorios: Array.isArray(body.recordatorios) ? body.recordatorios : []
+            tasks: Array.isArray(body.tasks) ? body.tasks : [],
+            reminders: Array.isArray(body.reminders) ? body.reminders : []
         };
-        console.log("📌 Usuario registrado:", userData);
+        console.log("User successfully registered:", userData);
         return this.usersService.create(userData);
     }
     async deleteUser(id) {
@@ -97,26 +97,38 @@ let UsersController = class UsersController {
             throw new common_1.BadRequestException('Name is required');
         return this.usersService.update(id, body);
     }
-    async addTaskToUser(id, tareaDto) {
+    async addTaskToUser(id, taskDto) {
         this.ensureValidObjectId(id);
-        if (!tareaDto.nombre || !tareaDto.fecha || !tareaDto.hora) {
-            throw new common_1.BadRequestException('La tarea debe tener nombre, fecha y hora');
+        if (!taskDto.name || !taskDto.time || !taskDto.date) {
+            throw new common_1.BadRequestException('The task must have a name, date and time');
         }
-        const updatedUser = await this.usersService.addTask(id, tareaDto);
+        const updatedUser = await this.usersService.addTask(id, taskDto);
         if (!updatedUser) {
-            throw new common_1.NotFoundException(`No se encontró un usuario con id ${id}`);
+            throw new common_1.NotFoundException(`No user with id found ${id}`);
         }
-        console.log(`✅ Nueva tarea agregada al usuario ${id}:`, JSON.stringify(tareaDto, null, 2));
+        console.log(`New task added to user ${id}:`, JSON.stringify(taskDto, null, 2));
+        return updatedUser;
+    }
+    async addReminderToUser(id, reminderDto) {
+        this.ensureValidObjectId(id);
+        if (!reminderDto.name || !reminderDto.time || !reminderDto.date) {
+            throw new common_1.BadRequestException('The reminder must have a name, date and time');
+        }
+        const updatedUser = await this.usersService.addReminder(id, reminderDto);
+        if (!updatedUser) {
+            throw new common_1.NotFoundException(`No user with id found ${id}`);
+        }
+        console.log(`New reminder added to user ${id}:`, JSON.stringify(reminderDto, null, 2));
         return updatedUser;
     }
     async recoverPassword(body) {
-        if (!body.correo)
-            throw new common_1.BadRequestException('El correo es obligatorio');
-        return this.usersService.sendPasswordRecoveryEmail(body.correo);
+        if (!body.email)
+            throw new common_1.BadRequestException('Email is mandatory');
+        return this.usersService.sendPasswordRecoveryEmail(body.email);
     }
     ensureValidObjectId(id) {
         if (!mongodb_1.ObjectId.isValid(id)) {
-            throw new common_1.BadRequestException(`El id proporcionado no es un ObjectId válido: ${id}`);
+            throw new common_1.BadRequestException(`The provided id is not a valid ObjectId: ${id}`);
         }
     }
 };
@@ -165,13 +177,21 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUser", null);
 __decorate([
-    (0, common_1.Post)(':id/tareas'),
+    (0, common_1.Post)(':id/tasks'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "addTaskToUser", null);
+__decorate([
+    (0, common_1.Post)(':id/reminders'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "addReminderToUser", null);
 __decorate([
     (0, common_1.Post)('recover-password'),
     __param(0, (0, common_1.Body)()),

@@ -1,20 +1,10 @@
+import { CreateTaskDto } from './create-task.dto';
+import { CreateReminderDto } from './create-reminder.dto';
 export declare class CreateUserDto {
     name: string;
-    correo: string;
+    email: string;
     username: string;
     password: string;
-    tareas?: {
-        nombre: string;
-        hora: string;
-        fecha: string;
-        mensaje: string;
-        estado: string;
-    }[];
-    recordatorios?: {
-        nombre: string;
-        hora: string;
-        fecha: string;
-        mensaje: string;
-        estado: string;
-    }[];
+    tasks?: CreateTaskDto[];
+    reminders?: CreateReminderDto[];
 }

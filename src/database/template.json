@@ -2,39 +2,39 @@
     {
       "user": {
         "name": "juan",
-        "correo": "juan@gmail.com",
+        "email": "juan@gmail.com",
         "username": "juan",
         "password": "juan123",
-        "tareas": [
+        "tasks": [
           {
-            "nombre": "tarea1",
-            "hora": "02:00pm",
-            "fecha": "2025-06-20",
-            "mensaje": "Hacer la tarea de matemáticas",
-            "estado": "pendiente"
+            "name": "tarea1",
+            "time": "02:00pm",
+            "date": "2025-06-20",
+            "message": "Hacer la tarea de matemáticas",
+            "state": "pendiente"
           },
           {
-            "nombre": "tarea2",
-            "hora": "08:00am",
-            "fecha": "2025-06-21",
-            "mensaje": "Llevar documentos al colegio",
-            "estado": "completado"
+            "name": "tarea2",
+            "time": "08:00am",
+            "date": "2025-06-21",
+            "message": "Llevar documentos al colegio",
+            "state": "completado"
           }
         ],
-        "recordatorios": [
+        "reminders": [
           {
-            "nombre": "recordatorio1",
-            "hora": "02:00pm",
-            "fecha": "2025-06-20",
-            "mensaje": "Hacer la tarea de matemáticas",
-            "estado": "pendiente"
+            "name": "recordatorio1",
+            "time": "02:00pm",
+            "date": "2025-06-20",
+            "message": "Hacer la tarea de matemáticas",
+            "state": "pendiente"
           },
           {
-            "nombre": "recordatorio2",
-            "hora": "08:00am",
-            "fecha": "2025-06-21",
-            "mensaje": "Llevar documentos al colegio",
-            "estado": "completado"
+            "name": "recordatorio2",
+            "time": "08:00am",
+            "date": "2025-06-21",
+            "message": "Llevar documentos al colegio",
+            "state": "completado"
           }
         ]
       }
@@ -42,39 +42,39 @@
     {
       "user": {
         "name": "luis",
-        "correo": "luis@gmail.com",
+        "email": "luis@gmail.com",
         "username": "luis",
         "password": "luis123",
-        "tareas": [
+        "tasks": [
           {
-            "nombre": "tarea1",
-            "hora": "04:00pm",
-            "fecha": "2025-07-20",
-            "mensaje": "Hacer la tarea de español",
-            "estado": "pendiente"
+            "name": "tarea1",
+            "time": "04:00pm",
+            "date": "2025-07-20",
+            "message": "Hacer la tarea de español",
+            "state": "pendiente"
           },
           {
-            "nombre": "tarea2",
-            "hora": "07:00am",
-            "fecha": "2025-07-21",
-            "mensaje": "Llevar documentos a la universidad",
-            "estado": "completado"
+            "name": "tarea2",
+            "time": "07:00am",
+            "date": "2025-07-21",
+            "message": "Llevar documentos a la universidad",
+            "state": "completado"
           }
         ],
-        "recordatorios": [
+        "reminders": [
           {
-            "nombre": "recordatorio1",
-            "hora": "02:00pm",
-            "fecha": "2025-06-20",
-            "mensaje": "Hacer la tarea de matemáticas",
-            "estado": "pendiente"
+            "name": "recordatorio1",
+            "time": "02:00pm",
+            "date": "2025-06-20",
+            "message": "Hacer la tarea de matemáticas",
+            "state": "pendiente"
           },
           {
-            "nombre": "recordatorio2",
-            "hora": "08:00am",
-            "fecha": "2025-06-21",
-            "mensaje": "Llevar documentos al colegio",
-            "estado": "completado"
+            "name": "recordatorio2",
+            "time": "08:00am",
+            "date": "2025-06-21",
+            "message": "Llevar documentos al colegio",
+            "state": "completado"
           }
         ]
       }
@@ -82,39 +82,39 @@
     {
       "user": {
         "name": "Ana",
-        "correo": "anas@gmail.com",
+        "email": "anas@gmail.com",
         "username": "ana",
         "password": "ana123",
-        "tareas": [
+        "tasks": [
           {
-            "nombre": "tarea1",
-            "hora": "12:00pm",
-            "fecha": "2025-08-20",
-            "mensaje": "Hacer la tarea de sociales",
-            "estado": "pendiente"
+            "name": "tarea1",
+            "time": "12:00pm",
+            "date": "2025-08-20",
+            "message": "Hacer la tarea de sociales",
+            "state": "pendiente"
           },
           {
-            "nombre": "tarea2",
-            "hora": "09:00am",
-            "fecha": "2025-08-21",
-            "mensaje": "Hacer la matricula de la universidad",
-            "estado": "completado"
+            "name": "tarea2",
+            "time": "09:00am",
+            "date": "2025-08-21",
+            "message": "Hacer la matricula de la universidad",
+            "state": "completado"
           }
         ],
-        "recordatorios": [
+        "reminders": [
           {
-            "nombre": "recordatorio1",
-            "hora": "02:00pm",
-            "fecha": "2025-06-20",
-            "mensaje": "Hacer la tarea de matemáticas",
-            "estado": "pendiente"
+            "name": "recordatorio1",
+            "time": "02:00pm",
+            "date": "2025-06-20",
+            "message": "Hacer la tarea de matemáticas",
+            "state": "pendiente"
           },
           {
-            "nombre": "recordatorio2",
-            "hora": "08:00am",
-            "fecha": "2025-06-21",
-            "mensaje": "Llevar documentos al colegio",
-            "estado": "completado"
+            "name": "recordatorio2",
+            "time": "08:00am",
+            "date": "2025-06-21",
+            "message": "Llevar documentos al colegio",
+            "state": "completado"
           }
         ]
       }

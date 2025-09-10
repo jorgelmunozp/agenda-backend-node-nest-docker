@@ -14,28 +14,26 @@ export class AuthService {
 
       // Validar que sea un array
       if (!Array.isArray(users)) {
-        throw new UnauthorizedException('Respuesta inválida del servidor');
+        throw new UnauthorizedException('Invalid server response');
       }
 
       // Buscar el usuario por username
-      const found = users.find(
-        (u: any) => u.user?.username === loginDto.username,
-      );
+      const found = users.find( (u: any) => u.user?.username === loginDto.username, );
 
       if (!found) {
-        throw new UnauthorizedException('Usuario o contraseña incorrecta');
+        throw new UnauthorizedException('Incorrect username or password');
       }
 
       // Validar contraseña
       if (found.user.password !== loginDto.password) {
-        throw new UnauthorizedException('Usuario o contraseña incorrecta');
+        throw new UnauthorizedException('Incorrect username or password');
       }
 
-      // Retornamos el objeto user (no todo el documento con _id)
-      return { message: 'Login correctamente', user: found.user };
+      // Retornamos el objeto user con id: _id
+      return { message: 'Succesfully Login', user: found.user };
     } catch (error) {
-      console.error('Error consultando /users:', error);
-      throw new UnauthorizedException('No se pudo validar el usuario');
+      console.error('Error querying /users:', error);
+      throw new UnauthorizedException('The user could not be validated');
     }
   }
 }

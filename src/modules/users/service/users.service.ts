@@ -4,26 +4,28 @@ import { ObjectId } from 'mongodb';
 import * as dotenv from "dotenv";
 import * as nodemailer from "nodemailer";
 import { CreateUserDto } from '../dto/create-user.dto';
+import { CreateTaskDto } from '../dto/create-task.dto';
+import { CreateReminderDto } from '../dto/create-reminder.dto';
 
-dotenv.config();
-const dbCollection = 'user'; // asegúrate que coincide con el nombre en MongoDB
+dotenv.config();                      // Load environment variables
+const dbCollection = 'user';          // MongoDB collection name
 
 @Injectable()
 export class UsersService {
   private readonly collectionName = dbCollection;
 
   private async getCollection() {
-    const db = await connectDB();
-    return db.collection(this.collectionName);
+    const db = await connectDB();     // Database connection
+    return db.collection(this.collectionName);  // Return the specific collection
   }
 
-  /*** OBTENER TODOS LOS USUARIOS ************/
-  async getAll() {
+  /*** SERVICE: GET ALL USERS ************/
+  async getAll() {                    // Get all users from the collection
     const collection = await this.getCollection();
     return collection.find().toArray();
   }
 
-  /*** OBTENER USUARIO POR ID ************/
+  /*** SERVICE: GET USER BY ID ************/
   async getById(id: string) {
     const collection = await this.getCollection();
     const doc = await collection.findOne({ _id: new ObjectId(id) });
@@ -31,15 +33,15 @@ export class UsersService {
     return doc;
   }
 
-  /*** CREAR NUEVO USUARIO ************/
+  /*** SERVICE: CREATE NEW USER ************/
   async create(createUserDto: CreateUserDto) {
     const collection = await this.getCollection();
     const newUser = { user: createUserDto };
     const result = await collection.insertOne(newUser);
-    return { _id: result.insertedId, ...newUser };
+    return { message: 'User created successfully', _id: result.insertedId, ...newUser };
   }
 
-  /*** ELIMINAR USUARIO ************/
+  /*** SERVICE: DELETE USER ************/
   async delete(id: string) {
     const collection = await this.getCollection();
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
@@ -49,7 +51,7 @@ export class UsersService {
     return { message: 'User deleted successfully' };
   }
 
-  /*** ACTUALIZAR USUARIO (PUT) ************/
+  /*** SERVICE: UPDATE USER (PUT) ************/
   async update(id: string, body: CreateUserDto) {
     const collection = await this.getCollection();
     const result = await collection.replaceOne(
@@ -59,10 +61,10 @@ export class UsersService {
     if (result.matchedCount === 0) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
-    return { message: 'User updated completely', user: { _id: id, ...body } };
+    return { message: 'User updated completely', user: { _id: id, ...body } };   // Response to the API caller
   }
 
-  /*** ACTUALIZAR PARCIALMENTE USUARIO (PATCH) ************/
+  /*** SERVICE: PARTIALLY UPDATE USER (PATCH) ************/
   async patch(id: string, body: Partial<CreateUserDto>) {
     const collection = await this.getCollection();
     const result = await collection.updateOne(
@@ -72,43 +74,69 @@ export class UsersService {
     if (result.matchedCount === 0) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
-    return { message: 'User updated partially' };
+    return { message: 'User updated partially' };    // Response to the API caller
   }
 
-  /*** SERVICIO: AÑADIR TAREA A UN USUARIO ************/
-  async addTask(userId: string, tarea: any) {
+  /*** SERVICE: ADD TASK TO A USER ************/
+async addTask(userId: string, task: CreateTaskDto) {
     const collection = await this.getCollection();
+    const objectId = new ObjectId(userId);
+
     const result = await collection.updateOne(
-      { _id: new ObjectId(userId) },
-      { $push: { "user.tareas": tarea } }
+      { _id: objectId },
+      { $push: { "user.tasks": task, } as any, }   // Se forza el tipo any porque TypeScript valida paths anidados
     );
 
     if (result.matchedCount === 0) {
       throw new NotFoundException(`User with id ${userId} not found`);
     }
 
-    const updatedUser = await collection.findOne({ _id: new ObjectId(userId) });
+    const updatedUser = await collection.findOne({ _id: objectId });
 
     if (!updatedUser) {
-      console.warn(`La tarea se agregó, pero no se pudo recuperar el usuario con id ${userId}`);
-      return { message: "Tarea agregada correctamente, pero no se pudo devolver el usuario" };
+      console.warn(`Task was added, but user with id ${userId} could not be retrieved`);
+      return { message: "Task added successfully, but the user could not be returned", };
     }
 
-    return { message: "Tarea agregada correctamente", user: updatedUser };
+    return { message: "Task added successfully", user: updatedUser, };    // Response to the API caller
   }
 
-  /*** SERVICIO: ENVIAR CORREO DE RECUPERACION DE CONTRASEÑA ************/
-  async sendPasswordRecoveryEmail(correo: string) {
+    /*** SERVICE: ADD REMINDER TO A USER ************/
+async addReminder(userId: string, reminder: CreateReminderDto) {
     const collection = await this.getCollection();
-    const user = await collection.findOne({ "user.correo": correo });
+    const objectId = new ObjectId(userId);
 
-    if (!user) {
-      throw new NotFoundException(`No existe un usuario con el correo ${correo}`);
+    const result = await collection.updateOne(
+      { _id: objectId },
+      { $push: { "user.reminders": reminder, } as any, }   // Se forza el tipo any porque TypeScript valida paths anidados
+    );
+
+    if (result.matchedCount === 0) {
+      throw new NotFoundException(`User with id ${userId} not found`);
     }
 
-    const nombre = user.user?.name ?? 'Usuario';
-    const username = user.user?.username ?? '(sin username)';
-    const password = user.user?.password ?? '(no definida)';
+    const updatedUser = await collection.findOne({ _id: objectId });
+
+    if (!updatedUser) {
+      console.warn(`Reminder was added, but user with id ${userId} could not be retrieved`);
+      return { message: "Reminder added successfully, but the user could not be returned", };
+    }
+
+    return { message: "Reminder added successfully", user: updatedUser, };    // Response to the API caller
+  }
+
+  /*** SERVICE: SEND PASSWORD RECOVERY EMAIL ************/
+  async sendPasswordRecoveryEmail(email: string) {
+    const collection = await this.getCollection();
+    const user = await collection.findOne({ "user.email": email });
+
+    if (!user) {
+      throw new NotFoundException(`There is no user with the email ${email}`);
+    }
+
+    const nombre = user.user?.name ?? 'User';
+    const username = user.user?.username ?? '(no username)';
+    const password = user.user?.password ?? '(no password)';
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -122,7 +150,7 @@ export class UsersService {
 
     const info = await transporter.sendMail({
       from: `"Soporte Agenda" <${process.env.SMTP_USER}>`,
-      to: correo,
+      to: email,
       subject: "Recuperación de contraseña",
       html: `
         <h2>Hola ${nombre},</h2>
@@ -135,9 +163,9 @@ export class UsersService {
       `,
     });
 
-    console.log(`📧 Correo con contraseña enviado a ${correo}:`, info.messageId);
+    console.log(`Email with password sent to ${email}:`, info.messageId);  // Message on the server console
 
-    return { message: "Correo de recuperación enviado con la contraseña actual" };
+    return { message: "Recovery email sent with current password" };  // Response to the API caller
   }
 
 }

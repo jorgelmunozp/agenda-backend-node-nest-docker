@@ -23,20 +23,20 @@ let AuthService = class AuthService {
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(url));
             const users = response.data;
             if (!Array.isArray(users)) {
-                throw new common_1.UnauthorizedException('Respuesta inválida del servidor');
+                throw new common_1.UnauthorizedException('Invalid server response');
             }
             const found = users.find((u) => u.user?.username === loginDto.username);
             if (!found) {
-                throw new common_1.UnauthorizedException('Usuario o contraseña incorrecta');
+                throw new common_1.UnauthorizedException('Incorrect username or password');
             }
             if (found.user.password !== loginDto.password) {
-                throw new common_1.UnauthorizedException('Usuario o contraseña incorrecta');
+                throw new common_1.UnauthorizedException('Incorrect username or password');
             }
-            return { message: 'Login correctamente', user: found.user };
+            return { message: 'Succesfully Login', user: found.user };
         }
         catch (error) {
-            console.error('Error consultando /users:', error);
-            throw new common_1.UnauthorizedException('No se pudo validar el usuario');
+            console.error('Error querying /users:', error);
+            throw new common_1.UnauthorizedException('The user could not be validated');
         }
     }
 };

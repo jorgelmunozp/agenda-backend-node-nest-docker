@@ -70,7 +70,7 @@ let UsersService = class UsersService {
         const collection = await this.getCollection();
         const newUser = { user: createUserDto };
         const result = await collection.insertOne(newUser);
-        return { _id: result.insertedId, ...newUser };
+        return { message: 'User created successfully', _id: result.insertedId, ...newUser };
     }
     async delete(id) {
         const collection = await this.getCollection();
@@ -96,28 +96,43 @@ let UsersService = class UsersService {
         }
         return { message: 'User updated partially' };
     }
-    async addTask(userId, tarea) {
+    async addTask(userId, task) {
         const collection = await this.getCollection();
-        const result = await collection.updateOne({ _id: new mongodb_1.ObjectId(userId) }, { $push: { "user.tareas": tarea } });
+        const objectId = new mongodb_1.ObjectId(userId);
+        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.tasks": task, }, });
         if (result.matchedCount === 0) {
             throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
-        const updatedUser = await collection.findOne({ _id: new mongodb_1.ObjectId(userId) });
+        const updatedUser = await collection.findOne({ _id: objectId });
         if (!updatedUser) {
-            console.warn(`La tarea se agregó, pero no se pudo recuperar el usuario con id ${userId}`);
-            return { message: "Tarea agregada correctamente, pero no se pudo devolver el usuario" };
+            console.warn(`Task was added, but user with id ${userId} could not be retrieved`);
+            return { message: "Task added successfully, but the user could not be returned", };
         }
-        return { message: "Tarea agregada correctamente", user: updatedUser };
+        return { message: "Task added successfully", user: updatedUser, };
     }
-    async sendPasswordRecoveryEmail(correo) {
+    async addReminder(userId, reminder) {
         const collection = await this.getCollection();
-        const user = await collection.findOne({ "user.correo": correo });
-        if (!user) {
-            throw new common_1.NotFoundException(`No existe un usuario con el correo ${correo}`);
+        const objectId = new mongodb_1.ObjectId(userId);
+        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.reminders": reminder, }, });
+        if (result.matchedCount === 0) {
+            throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
-        const nombre = user.user?.name ?? 'Usuario';
-        const username = user.user?.username ?? '(sin username)';
-        const password = user.user?.password ?? '(no definida)';
+        const updatedUser = await collection.findOne({ _id: objectId });
+        if (!updatedUser) {
+            console.warn(`Reminder was added, but user with id ${userId} could not be retrieved`);
+            return { message: "Reminder added successfully, but the user could not be returned", };
+        }
+        return { message: "Reminder added successfully", user: updatedUser, };
+    }
+    async sendPasswordRecoveryEmail(email) {
+        const collection = await this.getCollection();
+        const user = await collection.findOne({ "user.email": email });
+        if (!user) {
+            throw new common_1.NotFoundException(`There is no user with the email ${email}`);
+        }
+        const nombre = user.user?.name ?? 'User';
+        const username = user.user?.username ?? '(no username)';
+        const password = user.user?.password ?? '(no password)';
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: parseInt(process.env.SMTP_PORT ?? "587"),
@@ -129,7 +144,7 @@ let UsersService = class UsersService {
         });
         const info = await transporter.sendMail({
             from: `"Soporte Agenda" <${process.env.SMTP_USER}>`,
-            to: correo,
+            to: email,
             subject: "Recuperación de contraseña",
             html: `
         <h2>Hola ${nombre},</h2>
@@ -141,8 +156,8 @@ let UsersService = class UsersService {
         <p style="color: gray; font-size: 12px;">Este es un correo generado automáticamente, no respondas a este mensaje.</p>
       `,
         });
-        console.log(`📧 Correo con contraseña enviado a ${correo}:`, info.messageId);
-        return { message: "Correo de recuperación enviado con la contraseña actual" };
+        console.log(`Email with password sent to ${email}:`, info.messageId);
+        return { message: "Recovery email sent with current password" };
     }
 };
 exports.UsersService = UsersService;

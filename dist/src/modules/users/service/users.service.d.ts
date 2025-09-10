@@ -1,5 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { CreateTaskDto } from '../dto/create-task.dto';
+import { CreateReminderDto } from '../dto/create-reminder.dto';
 export declare class UsersService {
     private readonly collectionName;
     private getCollection;
@@ -7,6 +9,7 @@ export declare class UsersService {
     getById(id: string): Promise<import("mongodb").WithId<import("bson").Document>>;
     create(createUserDto: CreateUserDto): Promise<{
         user: CreateUserDto;
+        message: string;
         _id: ObjectId;
     }>;
     delete(id: string): Promise<{
@@ -16,37 +19,32 @@ export declare class UsersService {
         message: string;
         user: {
             name: string;
-            correo: string;
+            email: string;
             username: string;
             password: string;
-            tareas?: {
-                nombre: string;
-                hora: string;
-                fecha: string;
-                mensaje: string;
-                estado: string;
-            }[];
-            recordatorios?: {
-                nombre: string;
-                hora: string;
-                fecha: string;
-                mensaje: string;
-                estado: string;
-            }[];
+            tasks?: CreateTaskDto[];
+            reminders?: CreateReminderDto[];
             _id: string;
         };
     }>;
     patch(id: string, body: Partial<CreateUserDto>): Promise<{
         message: string;
     }>;
-    addTask(userId: string, tarea: any): Promise<{
+    addTask(userId: string, task: CreateTaskDto): Promise<{
         message: string;
         user?: undefined;
     } | {
         message: string;
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
-    sendPasswordRecoveryEmail(correo: string): Promise<{
+    addReminder(userId: string, reminder: CreateReminderDto): Promise<{
+        message: string;
+        user?: undefined;
+    } | {
+        message: string;
+        user: import("mongodb").WithId<import("bson").Document>;
+    }>;
+    sendPasswordRecoveryEmail(email: string): Promise<{
         message: string;
     }>;
 }

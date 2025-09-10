@@ -14,8 +14,8 @@ import { UsersService } from '../service/users.service';
 import * as dotenv from "dotenv";
 import { ObjectId } from 'mongodb';
 
-dotenv.config();
-const db = 'users';
+dotenv.config();                  // Load environment variables
+const db = 'users';               // Database route for this controller
 
 @Controller(db)
 export class UsersController {
@@ -36,21 +36,21 @@ export class UsersController {
   async addUser(@Body() body: any) {
     // Validaciones mínimas
     if (!body.name) throw new BadRequestException('Name is required');
-    if (!body.correo) throw new BadRequestException('Correo is required');
+    if (!body.email) throw new BadRequestException('Email is required');
     if (!body.username) throw new BadRequestException('Username is required');
     if (!body.password) throw new BadRequestException('Password is required');
 
     // Construcción explícita del objeto user
     const userData = {
       name: body.name,
-      correo: body.correo,
+      email: body.email,
       username: body.username,
       password: body.password,
-      tareas: Array.isArray(body.tareas) ? body.tareas : [],
-      recordatorios: Array.isArray(body.recordatorios) ? body.recordatorios : []
+      tasks: Array.isArray(body.tasks) ? body.tasks : [],
+      reminders: Array.isArray(body.reminders) ? body.reminders : []
     };
 
-    console.log("📌 Usuario registrado:", userData);
+    console.log("User successfully registered:", userData);
     return this.usersService.create(userData);
   }
 
@@ -73,37 +73,57 @@ export class UsersController {
     return this.usersService.update(id, body);
   }
 
-  // Servicio: Añadir una tarea a un usuario
-  @Post(':id/tareas')
-  async addTaskToUser(@Param('id') id: string, @Body() tareaDto: any) {
+  // Service: Add a task to a user
+  @Post(':id/tasks')
+  async addTaskToUser(@Param('id') id: string, @Body() taskDto: any) {
     this.ensureValidObjectId(id);
 
-    if (!tareaDto.nombre || !tareaDto.fecha || !tareaDto.hora) {
-      throw new BadRequestException('La tarea debe tener nombre, fecha y hora');
+    if (!taskDto.name || !taskDto.time || !taskDto.date) {
+      throw new BadRequestException('The task must have a name, date and time');
     }
 
-    const updatedUser = await this.usersService.addTask(id, tareaDto);
+    const updatedUser = await this.usersService.addTask(id, taskDto);
 
     if (!updatedUser) {
-      throw new NotFoundException(`No se encontró un usuario con id ${id}`);
+      throw new NotFoundException(`No user with id found ${id}`);
     }
 
-    console.log(`✅ Nueva tarea agregada al usuario ${id}:`, JSON.stringify(tareaDto, null, 2));
+    console.log(`New task added to user ${id}:`, JSON.stringify(taskDto, null, 2));
 
     return updatedUser;
   }
 
-  // Servicio: Enviar email de recuperación de contraseña
+  // Service: Add a reminder to a user
+  @Post(':id/reminders')
+  async addReminderToUser(@Param('id') id: string, @Body() reminderDto: any) {
+    this.ensureValidObjectId(id);
+
+    if (!reminderDto.name || !reminderDto.time || !reminderDto.date) {
+      throw new BadRequestException('The reminder must have a name, date and time');
+    }
+
+    const updatedUser = await this.usersService.addReminder(id, reminderDto);
+
+    if (!updatedUser) {
+      throw new NotFoundException(`No user with id found ${id}`);
+    }
+
+    console.log(`New reminder added to user ${id}:`, JSON.stringify(reminderDto, null, 2));
+
+    return updatedUser;
+  }
+
+  // Service: Send password recovery email
   @Post('recover-password')
-  async recoverPassword(@Body() body: { correo: string }) {
-    if (!body.correo) throw new BadRequestException('El correo es obligatorio');
-    return this.usersService.sendPasswordRecoveryEmail(body.correo);
+  async recoverPassword(@Body() body: { email: string }) {
+    if (!body.email) throw new BadRequestException('Email is mandatory');
+    return this.usersService.sendPasswordRecoveryEmail(body.email);
   }
 
   // Helper privado para validar ObjectId
   private ensureValidObjectId(id: string) {
     if (!ObjectId.isValid(id)) {
-      throw new BadRequestException(`El id proporcionado no es un ObjectId válido: ${id}`);
+      throw new BadRequestException(`The provided id is not a valid ObjectId: ${id}`);
     }
   }
 }

@@ -20,7 +20,7 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     async login(loginDto) {
-        console.log('Login recibido:', loginDto);
+        console.log('Login received:', loginDto);
         return this.authService.login(loginDto);
     }
 };
