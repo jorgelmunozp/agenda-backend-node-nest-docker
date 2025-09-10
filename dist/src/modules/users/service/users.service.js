@@ -44,6 +44,7 @@ const common_1 = require("@nestjs/common");
 const connectDB_1 = require("../../../database/connectDB");
 const mongodb_1 = require("mongodb");
 const dotenv = __importStar(require("dotenv"));
+const nodemailer = __importStar(require("nodemailer"));
 dotenv.config();
 const dbCollection = 'user';
 let UsersService = class UsersService {
@@ -60,15 +61,16 @@ let UsersService = class UsersService {
     }
     async getById(id) {
         const collection = await this.getCollection();
-        const user = await collection.findOne({ _id: new mongodb_1.ObjectId(id) });
-        if (!user)
+        const doc = await collection.findOne({ _id: new mongodb_1.ObjectId(id) });
+        if (!doc)
             throw new common_1.NotFoundException(`User with id ${id} not found`);
-        return user;
+        return doc;
     }
     async create(user) {
         const collection = await this.getCollection();
-        const result = await collection.insertOne(user);
-        return { ...user, _id: result.insertedId };
+        const newUser = { user };
+        const result = await collection.insertOne(newUser);
+        return { _id: result.insertedId, ...newUser };
     }
     async delete(id) {
         const collection = await this.getCollection();
@@ -80,7 +82,7 @@ let UsersService = class UsersService {
     }
     async update(id, body) {
         const collection = await this.getCollection();
-        const result = await collection.replaceOne({ _id: new mongodb_1.ObjectId(id) }, body);
+        const result = await collection.replaceOne({ _id: new mongodb_1.ObjectId(id) }, { user: body });
         if (result.matchedCount === 0) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
         }
@@ -88,7 +90,7 @@ let UsersService = class UsersService {
     }
     async patch(id, body) {
         const collection = await this.getCollection();
-        const result = await collection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: body });
+        const result = await collection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: { user: body } });
         if (result.matchedCount === 0) {
             throw new common_1.NotFoundException(`User with id ${id} not found`);
         }
@@ -102,13 +104,39 @@ let UsersService = class UsersService {
         }
         const updatedUser = await collection.findOne({ _id: new mongodb_1.ObjectId(userId) });
         if (!updatedUser) {
-            console.warn(`⚠️ La tarea se agregó, pero no se pudo recuperar el usuario con id ${userId}`);
+            console.warn(`La tarea se agregó, pero no se pudo recuperar el usuario con id ${userId}`);
             return { message: "Tarea agregada correctamente, pero no se pudo devolver el usuario" };
         }
-        return {
-            message: "Tarea agregada correctamente",
-            user: updatedUser
-        };
+        return { message: "Tarea agregada correctamente", user: updatedUser };
+    }
+    async sendPasswordRecoveryEmail(correo) {
+        const collection = await this.getCollection();
+        const userDoc = await collection.findOne({ "user.correo": correo });
+        if (!userDoc) {
+            throw new common_1.NotFoundException(`No existe un usuario con el correo ${correo}`);
+        }
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${userDoc._id}`;
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT ?? "587"),
+            secure: false,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS,
+            },
+        });
+        const info = await transporter.sendMail({
+            from: `"Soporte Agenda" <${process.env.SMTP_USER}>`,
+            to: correo,
+            subject: "Recuperación de contraseña",
+            html: `
+        <h1>Recuperación de contraseña</h1>
+        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+        <a href="${resetLink}">${resetLink}</a>
+      `,
+        });
+        console.log(`📧 Correo enviado correctamente a ${correo}: ${info.messageId}`);
+        return { message: "Correo de recuperación enviado", link: resetLink };
     }
 };
 exports.UsersService = UsersService;

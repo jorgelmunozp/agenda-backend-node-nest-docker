@@ -1,10 +1,13 @@
-import { Document } from 'mongodb';
+import { ObjectId } from 'mongodb';
 export declare class UsersService {
     private readonly collectionName;
     private getCollection;
-    getAll(): Promise<import("mongodb").WithId<Document>[]>;
-    getById(id: string): Promise<import("mongodb").WithId<Document>>;
-    create(user: any): Promise<any>;
+    getAll(): Promise<import("mongodb").WithId<import("bson").Document>[]>;
+    getById(id: string): Promise<import("mongodb").WithId<import("bson").Document>>;
+    create(user: any): Promise<{
+        user: any;
+        _id: ObjectId;
+    }>;
     delete(id: string): Promise<{
         message: string;
     }>;
@@ -20,6 +23,10 @@ export declare class UsersService {
         user?: undefined;
     } | {
         message: string;
-        user: import("mongodb").WithId<Document>;
+        user: import("mongodb").WithId<import("bson").Document>;
+    }>;
+    sendPasswordRecoveryEmail(correo: string): Promise<{
+        message: string;
+        link: string;
     }>;
 }

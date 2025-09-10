@@ -49,7 +49,6 @@ export class UsersController {
   }
 
   // Servicio: Añadir una tarea a un usuario
-  // Servicio: Añadir una tarea a un usuario
   @Post(':id/tareas')
   async addTaskToUser(@Param('id') id: string, @Body() tareaDto: any) {
     this.ensureValidObjectId(id);
@@ -75,5 +74,13 @@ export class UsersController {
     }
   }
 
+  // Servicio: Enviar email de recuperación de contraseña
+  @Post('recover-password')
+  async recoverPassword(@Body() body: { correo: string }) {
+    if (!body.correo) {
+      throw new BadRequestException('El correo es obligatorio');
+    }
+    return this.usersService.sendPasswordRecoveryEmail(body.correo);
+  }
 
 }

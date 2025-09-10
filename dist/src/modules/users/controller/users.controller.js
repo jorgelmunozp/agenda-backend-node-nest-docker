@@ -90,13 +90,19 @@ let UsersController = class UsersController {
         if (!updatedUser) {
             throw new common_1.NotFoundException(`No se encontró un usuario con id ${id}`);
         }
-        console.log(`✅ Nueva tarea agregada al usuario ${id}:`, JSON.stringify(tareaDto, null, 2));
+        console.log(`Nueva tarea agregada al usuario ${id}:`, JSON.stringify(tareaDto, null, 2));
         return updatedUser;
     }
     ensureValidObjectId(id) {
         if (!mongodb_1.ObjectId.isValid(id)) {
             throw new common_1.BadRequestException(`El id proporcionado no es un ObjectId válido: ${id}`);
         }
+    }
+    async recoverPassword(body) {
+        if (!body.correo) {
+            throw new common_1.BadRequestException('El correo es obligatorio');
+        }
+        return this.usersService.sendPasswordRecoveryEmail(body.correo);
     }
 };
 exports.UsersController = UsersController;
@@ -151,6 +157,13 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "addTaskToUser", null);
+__decorate([
+    (0, common_1.Post)('recover-password'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "recoverPassword", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)(db),
     __metadata("design:paramtypes", [users_service_1.UsersService])
