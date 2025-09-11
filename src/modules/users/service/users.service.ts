@@ -92,7 +92,7 @@ export class UsersService {
 
     const result = await collection.updateOne(
       { _id: objectId },
-      { $push: { "user.tasks": { task: task, id: taskId } } } as any // se fuerza el tipo any porque TS valida paths anidados
+      { $push: { "user.tasks": { task: { ...task, completed: false }, id: taskId } } } as any // se fuerza el tipo any porque TS valida paths anidados
     );
 
     if (result.matchedCount === 0) {
@@ -139,7 +139,7 @@ export class UsersService {
 
     const result = await collection.updateOne(
       { _id: objectId },
-      { $push: { "user.reminders": { reminder: reminder, id: reminderId } } } as any // se fuerza el tipo any porque TS valida paths anidados
+      { $push: { "user.reminders": { reminder: { ...reminder, completed: false }, id: reminderId } } } as any // se fuerza el tipo any porque TS valida paths anidados
 
     );
 

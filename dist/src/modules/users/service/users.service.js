@@ -104,7 +104,7 @@ let UsersService = class UsersService {
             throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
         const taskId = "t" + ((userDoc.user?.tasks?.length ?? 0) + 1);
-        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.tasks": { task: task, id: taskId } } });
+        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.tasks": { task: { ...task, completed: false }, id: taskId } } });
         if (result.matchedCount === 0) {
             throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
@@ -133,7 +133,7 @@ let UsersService = class UsersService {
             throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
         const reminderId = "r" + ((userDoc.user?.reminders?.length ?? 0) + 1);
-        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.reminders": { reminder: reminder, id: reminderId } } });
+        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.reminders": { reminder: { ...reminder, completed: false }, id: reminderId } } });
         if (result.matchedCount === 0) {
             throw new common_1.NotFoundException(`User with id ${userId} not found`);
         }
