@@ -45,6 +45,7 @@ export declare class UsersController {
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
     getReminderById(userId: string, reminderId: string): Promise<any>;
+    completeReminder(userId: string, reminderId: string): Promise<string>;
     recoverPassword(body: {
         email: string;
     }): Promise<{

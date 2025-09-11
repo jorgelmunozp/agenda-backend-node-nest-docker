@@ -163,6 +163,15 @@ let UsersController = class UsersController {
         }
         return reminder;
     }
+    async completeReminder(userId, reminderId) {
+        this.ensureValidObjectId(userId);
+        const updatedReminder = await this.usersService.completeReminder(userId, reminderId);
+        if (!updatedReminder) {
+            throw new common_1.NotFoundException(`No task with id ${reminderId} found for user ${userId}`);
+        }
+        console.log(`Task ${reminderId} for user ${userId} marked as completado:`, updatedTask);
+        return updatedReminder;
+    }
     async recoverPassword(body) {
         if (!body.email)
             throw new common_1.BadRequestException('Email is mandatory');
@@ -258,6 +267,14 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getReminderById", null);
+__decorate([
+    (0, common_1.Patch)(':userId/reminders/:reminderId'),
+    __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Param)('reminderId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "completeReminder", null);
 __decorate([
     (0, common_1.Post)('recover-password'),
     __param(0, (0, common_1.Body)()),

@@ -144,6 +144,16 @@ let UsersService = class UsersService {
         }
         return { message: "Reminder added successfully", user: updatedUser, };
     }
+    async completeReminder(userId, reminderId) {
+        const collection = await this.getCollection();
+        const result = await collection.findOneAndUpdate({
+            _id: new mongodb_1.ObjectId(userId),
+            "user.reminders.id": reminderId
+        }, {
+            $set: { "user.reminders.$.reminder.state": "completado" }
+        });
+        return "Reminder marked as completed successfully";
+    }
     async findByEmailOrUsername(email, username) {
         const collection = await this.getCollection();
         const existingData = await collection.findOne({

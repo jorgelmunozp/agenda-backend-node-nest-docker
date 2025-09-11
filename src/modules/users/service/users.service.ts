@@ -157,7 +157,24 @@ export class UsersService {
     return { message: "Reminder added successfully", user: updatedUser, };    // Response to the API caller
   }
 
+  /*** SERVICE: CHECK A COMPLETED REMINDER ************/
+  async completeReminder(userId: string, reminderId: string) {
+    const collection = await this.getCollection();
+
+    const result = await collection.findOneAndUpdate(
+      {
+        _id: new ObjectId(userId),
+        "user.reminders.id": reminderId // busco la tarea específica
+      },
+      {
+        $set: { "user.reminders.$.reminder.state": "completado" } // actualizo solo el estado
+      }
+    );
+    
+    return "Reminder marked as completed successfully";
+  }
   
+//************************** REGISTER *************************************/
   /*** SERVICE: CHECK IF USERNAME OR EMAIL USER ALREADY EXISTS ************/
   async findByEmailOrUsername(email: string, username: string) {
     const collection = await this.getCollection();
@@ -178,7 +195,7 @@ export class UsersService {
     return result;
   }
 
-
+//************************** PASSWORD RECOVERY *************************************/
   /*** SERVICE: SEND PASSWORD RECOVERY EMAIL ************/
   async sendPasswordRecoveryEmail(email: string) {
     const collection = await this.getCollection();

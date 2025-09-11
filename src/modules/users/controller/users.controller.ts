@@ -114,11 +114,11 @@ export class UsersController {
     return task;
   }
 
-  // Service: Update user Task state by id
+  // Service: Update Task state to completed
   @Patch(':userId/tasks/:taskId')
   async completeTask( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
     this.ensureValidObjectId(userId);
-    
+
     const updatedTask = await this.usersService.completeTask(userId, taskId);
     if (!updatedTask) {
       throw new NotFoundException(`No task with id ${taskId} found for user ${userId}`);
@@ -169,6 +169,21 @@ export class UsersController {
     }
 
     return reminder;
+  }
+
+  // Service: Update Reminder state to completed
+  @Patch(':userId/reminders/:reminderId')
+  async completeReminder( @Param('userId') userId: string, @Param('reminderId') reminderId: string ) {
+    this.ensureValidObjectId(userId);
+
+    const updatedReminder = await this.usersService.completeReminder(userId, reminderId);
+    if (!updatedReminder) {
+      throw new NotFoundException(`No task with id ${reminderId} found for user ${userId}`);
+    }
+
+    console.log(`Task ${reminderId} for user ${userId} marked as completado:`, updatedTask);
+
+    return updatedReminder;
   }
 
 //************************** PASSWORD RECOVERY *************************************/

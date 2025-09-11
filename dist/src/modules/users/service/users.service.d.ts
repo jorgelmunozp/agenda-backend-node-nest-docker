@@ -45,6 +45,7 @@ export declare class UsersService {
         message: string;
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
+    completeReminder(userId: string, reminderId: string): Promise<string>;
     findByEmailOrUsername(email: string, username: string): Promise<{
         email?: boolean;
         username?: boolean;
