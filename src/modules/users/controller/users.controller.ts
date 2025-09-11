@@ -114,7 +114,7 @@ export class UsersController {
     return task;
   }
 
-  // Service: Update Task state to completed
+  // Service: Update Task to completed
   @Patch(':userId/tasks/:taskId')
   async completeTask( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
     this.ensureValidObjectId(userId);
@@ -171,7 +171,7 @@ export class UsersController {
     return reminder;
   }
 
-  // Service: Update Reminder state to completed
+  // Service: Update Reminder to completed
   @Patch(':userId/reminders/:reminderId')
   async completeReminder( @Param('userId') userId: string, @Param('reminderId') reminderId: string ) {
     this.ensureValidObjectId(userId);
@@ -181,7 +181,7 @@ export class UsersController {
       throw new NotFoundException(`No task with id ${reminderId} found for user ${userId}`);
     }
 
-    console.log(`Task ${reminderId} for user ${userId} marked as completado:`, updatedTask);
+    console.log(`Task ${reminderId} for user ${userId} marked as completado:`, updatedReminder);
 
     return updatedReminder;
   }

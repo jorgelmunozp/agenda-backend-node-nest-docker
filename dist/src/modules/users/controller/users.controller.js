@@ -169,7 +169,7 @@ let UsersController = class UsersController {
         if (!updatedReminder) {
             throw new common_1.NotFoundException(`No task with id ${reminderId} found for user ${userId}`);
         }
-        console.log(`Task ${reminderId} for user ${userId} marked as completado:`, updatedTask);
+        console.log(`Task ${reminderId} for user ${userId} marked as completado:`, updatedReminder);
         return updatedReminder;
     }
     async recoverPassword(body) {

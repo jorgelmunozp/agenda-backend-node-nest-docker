@@ -119,7 +119,7 @@ export class UsersService {
         "user.tasks.id": taskId // busco la tarea específica
       },
       {
-        $set: { "user.tasks.$.task.state": "completado" } // actualizo solo el estado
+        $set: { "user.tasks.$.task.completed": true } // actualizo solo el estado
       }
     );
     
@@ -167,7 +167,7 @@ export class UsersService {
         "user.reminders.id": reminderId // busco la tarea específica
       },
       {
-        $set: { "user.reminders.$.reminder.state": "completado" } // actualizo solo el estado
+        $set: { "user.reminders.$.reminder.completed": true } // actualizo solo el estado
       }
     );
     

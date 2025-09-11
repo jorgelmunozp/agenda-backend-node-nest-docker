@@ -11,14 +11,14 @@
             "time": "02:00pm",
             "date": "2025-06-20",
             "message": "Hacer la tarea de matemáticas",
-            "state": "pendiente"
+            "completed": false
           },
           {
             "name": "tarea2",
             "time": "08:00am",
             "date": "2025-06-21",
             "message": "Llevar documentos al colegio",
-            "state": "completado"
+            "completed": true
           }
         ],
         "reminders": [
@@ -27,14 +27,14 @@
             "time": "02:00pm",
             "date": "2025-06-20",
             "message": "Hacer la tarea de matemáticas",
-            "state": "pendiente"
+            "completed": false
           },
           {
             "name": "recordatorio2",
             "time": "08:00am",
             "date": "2025-06-21",
             "message": "Llevar documentos al colegio",
-            "state": "completado"
+            "completed": true
           }
         ]
       }
@@ -51,14 +51,14 @@
             "time": "04:00pm",
             "date": "2025-07-20",
             "message": "Hacer la tarea de español",
-            "state": "pendiente"
+            "completed": false
           },
           {
             "name": "tarea2",
             "time": "07:00am",
             "date": "2025-07-21",
             "message": "Llevar documentos a la universidad",
-            "state": "completado"
+            "completed": true
           }
         ],
         "reminders": [
@@ -67,14 +67,14 @@
             "time": "02:00pm",
             "date": "2025-06-20",
             "message": "Hacer la tarea de matemáticas",
-            "state": "pendiente"
+            "completed": false
           },
           {
             "name": "recordatorio2",
             "time": "08:00am",
             "date": "2025-06-21",
             "message": "Llevar documentos al colegio",
-            "state": "completado"
+            "completed": true
           }
         ]
       }
@@ -91,14 +91,14 @@
             "time": "12:00pm",
             "date": "2025-08-20",
             "message": "Hacer la tarea de sociales",
-            "state": "pendiente"
+            "completed": false
           },
           {
             "name": "tarea2",
             "time": "09:00am",
             "date": "2025-08-21",
             "message": "Hacer la matricula de la universidad",
-            "state": "completado"
+            "completed": true
           }
         ],
         "reminders": [
@@ -107,14 +107,14 @@
             "time": "02:00pm",
             "date": "2025-06-20",
             "message": "Hacer la tarea de matemáticas",
-            "state": "pendiente"
+            "completed": false
           },
           {
             "name": "recordatorio2",
             "time": "08:00am",
             "date": "2025-06-21",
             "message": "Llevar documentos al colegio",
-            "state": "completado"
+            "completed": true
           }
         ]
       }

@@ -121,7 +121,7 @@ let UsersService = class UsersService {
             _id: new mongodb_1.ObjectId(userId),
             "user.tasks.id": taskId
         }, {
-            $set: { "user.tasks.$.task.state": "completado" }
+            $set: { "user.tasks.$.task.completed": true }
         });
         return "Task marked as completed successfully";
     }
@@ -150,7 +150,7 @@ let UsersService = class UsersService {
             _id: new mongodb_1.ObjectId(userId),
             "user.reminders.id": reminderId
         }, {
-            $set: { "user.reminders.$.reminder.state": "completado" }
+            $set: { "user.reminders.$.reminder.completed": true }
         });
         return "Reminder marked as completed successfully";
     }
