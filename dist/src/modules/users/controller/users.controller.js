@@ -130,6 +130,15 @@ let UsersController = class UsersController {
         }
         return task;
     }
+    async completeTask(userId, taskId) {
+        this.ensureValidObjectId(userId);
+        const updatedTask = await this.usersService.completeTask(userId, taskId);
+        if (!updatedTask) {
+            throw new common_1.NotFoundException(`No task with id ${taskId} found for user ${userId}`);
+        }
+        console.log(`Task ${taskId} for user ${userId} marked as completado:`, updatedTask);
+        return updatedTask;
+    }
     async addReminderToUser(id, reminderDto) {
         this.ensureValidObjectId(id);
         if (!reminderDto.name || !reminderDto.time || !reminderDto.date) {
@@ -225,6 +234,14 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getTaskById", null);
+__decorate([
+    (0, common_1.Patch)(':userId/tasks/:taskId'),
+    __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Param)('taskId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "completeTask", null);
 __decorate([
     (0, common_1.Post)(':id/reminders'),
     __param(0, (0, common_1.Param)('id')),

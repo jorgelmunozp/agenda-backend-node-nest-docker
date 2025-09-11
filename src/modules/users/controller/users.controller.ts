@@ -114,6 +114,22 @@ export class UsersController {
     return task;
   }
 
+  // Service: Update user Task state by id
+  @Patch(':userId/tasks/:taskId')
+  async completeTask( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
+    this.ensureValidObjectId(userId);
+    
+    const updatedTask = await this.usersService.completeTask(userId, taskId);
+    if (!updatedTask) {
+      throw new NotFoundException(`No task with id ${taskId} found for user ${userId}`);
+    }
+
+    console.log(`Task ${taskId} for user ${userId} marked as completado:`, updatedTask);
+
+    return updatedTask;
+  }
+
+
 //************************** REMINDERS *************************************/
   // Service: Add a Reminder to a user
   @Post(':id/reminders')

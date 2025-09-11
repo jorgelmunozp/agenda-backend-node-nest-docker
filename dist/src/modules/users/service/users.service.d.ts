@@ -37,6 +37,7 @@ export declare class UsersService {
         message: string;
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
+    completeTask(userId: string, taskId: string): Promise<string>;
     addReminder(userId: string, reminder: CreateReminderDto): Promise<{
         message: string;
         user?: undefined;

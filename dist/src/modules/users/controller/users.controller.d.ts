@@ -36,6 +36,7 @@ export declare class UsersController {
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
     getTaskById(userId: string, taskId: string): Promise<any>;
+    completeTask(userId: string, taskId: string): Promise<string>;
     addReminderToUser(id: string, reminderDto: any): Promise<{
         message: string;
         user?: undefined;

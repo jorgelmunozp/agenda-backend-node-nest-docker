@@ -115,6 +115,16 @@ let UsersService = class UsersService {
         }
         return { message: "Task added successfully", user: updatedUser, };
     }
+    async completeTask(userId, taskId) {
+        const collection = await this.getCollection();
+        const result = await collection.findOneAndUpdate({
+            _id: new mongodb_1.ObjectId(userId),
+            "user.tasks.id": taskId
+        }, {
+            $set: { "user.tasks.$.task.state": "completado" }
+        });
+        return "Task marked as completed successfully";
+    }
     async addReminder(userId, reminder) {
         const collection = await this.getCollection();
         const objectId = new mongodb_1.ObjectId(userId);

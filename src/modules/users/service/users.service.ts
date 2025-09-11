@@ -20,6 +20,7 @@ export class UsersService {
     return db.collection(this.collectionName);  // Return the specific collection
   }
 
+//************************** USERS *************************************/
   /*** SERVICE: GET ALL USERS ************/
   async getAll() {                    // Get all users from the collection
     const collection = await this.getCollection();
@@ -78,6 +79,7 @@ export class UsersService {
     return { message: 'User updated partially' };    // Response to the API caller
   }
 
+//************************** TASKS *************************************/
   /*** SERVICE: ADD A TASK TO AN USER ************/
   async addTask(userId: string, task: CreateTaskDto) {
     const collection = await this.getCollection();
@@ -107,6 +109,24 @@ export class UsersService {
     return { message: "Task added successfully", user: updatedUser, };    // Response to the API caller
   }
 
+  /*** SERVICE: CHECK A COMPLETED TASK ************/
+  async completeTask(userId: string, taskId: string) {
+    const collection = await this.getCollection();
+
+    const result = await collection.findOneAndUpdate(
+      {
+        _id: new ObjectId(userId),
+        "user.tasks.id": taskId // busco la tarea específica
+      },
+      {
+        $set: { "user.tasks.$.task.state": "completado" } // actualizo solo el estado
+      }
+    );
+    
+    return "Task marked as completed successfully";
+  }
+
+//************************** REMINDERS *************************************/
   /*** SERVICE: ADD A REMINDER TO AN USER ************/
   async addReminder(userId: string, reminder: CreateReminderDto) {
     const collection = await this.getCollection();
