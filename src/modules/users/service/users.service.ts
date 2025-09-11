@@ -6,7 +6,6 @@ import * as nodemailer from "nodemailer";
 import { CreateUserDto } from '../dto/create-user.dto';
 import { CreateTaskDto } from '../dto/create-task.dto';
 import { CreateReminderDto } from '../dto/create-reminder.dto';
-import { timestamp } from 'rxjs';
 
 dotenv.config();                      // Load environment variables
 const dbCollection = 'user';          // MongoDB collection name
