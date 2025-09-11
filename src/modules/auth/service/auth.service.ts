@@ -7,7 +7,7 @@ export class AuthService {
   constructor(private readonly httpService: HttpService) {}
 
   async login(loginDto: { username: string; password: string }) {
-    const url = 'http://localhost:3000/users'; // traemos TODOS los usuarios
+    const url = process.env.FRONTEND_URL + '/users'; // traemos TODOS los usuarios
     try {
       const response = await firstValueFrom(this.httpService.get(url));
       const users = response.data;

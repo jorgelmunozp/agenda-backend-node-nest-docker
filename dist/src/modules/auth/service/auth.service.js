@@ -18,7 +18,7 @@ let AuthService = class AuthService {
         this.httpService = httpService;
     }
     async login(loginDto) {
-        const url = 'http://localhost:3000/users';
+        const url = process.env.FRONTEND_URL + '/users';
         try {
             const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(url));
             const users = response.data;
