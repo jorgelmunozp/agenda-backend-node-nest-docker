@@ -23,29 +23,11 @@ export declare class UsersController {
             email: string;
             username: string;
             password: string;
-            tasks?: import("../dto/create-task.dto").CreateTaskDto[];
-            reminders?: import("../dto/create-reminder.dto").CreateReminderDto[];
+            tasks?: import("../../tasks/dto/create-task.dto").CreateTaskDto[];
+            reminders?: import("../../reminders/dto/create-reminder.dto").CreateReminderDto[];
             _id: string;
         };
     }>;
-    addTaskToUser(id: string, taskDto: any): Promise<{
-        message: string;
-        user?: undefined;
-    } | {
-        message: string;
-        user: import("mongodb").WithId<import("bson").Document>;
-    }>;
-    getTaskById(userId: string, taskId: string): Promise<any>;
-    completeTask(userId: string, taskId: string): Promise<string>;
-    addReminderToUser(id: string, reminderDto: any): Promise<{
-        message: string;
-        user?: undefined;
-    } | {
-        message: string;
-        user: import("mongodb").WithId<import("bson").Document>;
-    }>;
-    getReminderById(userId: string, reminderId: string): Promise<any>;
-    completeReminder(userId: string, reminderId: string): Promise<string>;
     recoverPassword(body: {
         email: string;
     }): Promise<{

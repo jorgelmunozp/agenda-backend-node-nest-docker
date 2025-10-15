@@ -10,6 +10,8 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_module_1 = require("./src/modules/auth/auth.module");
 const users_module_1 = require("./src/modules/users/users.module");
+const tasks_module_1 = require("./src/modules/tasks/tasks.module");
+const reminders_module_1 = require("./src/modules/reminders/reminders.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -18,6 +20,8 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
+            tasks_module_1.TasksModule,
+            reminders_module_1.RemindersModule,
         ],
     })
 ], AppModule);

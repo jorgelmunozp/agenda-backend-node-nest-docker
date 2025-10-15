@@ -13,6 +13,7 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const rxjs_1 = require("rxjs");
+const jwt_decode_1 = require("jwt-decode");
 let AuthService = class AuthService {
     constructor(httpService) {
         this.httpService = httpService;
@@ -25,12 +26,18 @@ let AuthService = class AuthService {
             if (!Array.isArray(users)) {
                 throw new common_1.UnauthorizedException('Invalid server response');
             }
-            const found = users.find((u) => u.user?.username === loginDto.username);
+            const found = users.find((u) => {
+                const decodedUsername = (0, jwt_decode_1.jwtDecode)(u.user?.username);
+                return decodedUsername === loginDto.username;
+            });
             if (!found) {
-                throw new common_1.UnauthorizedException('Incorrect username or password');
+                throw new common_1.UnauthorizedException('Incorrect username');
             }
-            if (found.user.password !== loginDto.password) {
-                throw new common_1.UnauthorizedException('Incorrect username or password');
+            if (found) {
+                const decodedPassword = (0, jwt_decode_1.jwtDecode)(found.user.password);
+                if (decodedPassword !== loginDto.password) {
+                    throw new common_1.UnauthorizedException('Incorrect password');
+                }
             }
             return { message: 'Succesfully Login', user: found.user };
         }

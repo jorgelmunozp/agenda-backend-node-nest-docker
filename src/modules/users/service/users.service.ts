@@ -1,11 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { connectDB } from '../../../database/connectDB';
 import { ObjectId } from 'mongodb';
 import * as dotenv from "dotenv";
 import * as nodemailer from "nodemailer";
 import { CreateUserDto } from '../dto/create-user.dto';
-import { CreateTaskDto } from '../dto/create-task.dto';
-import { CreateReminderDto } from '../dto/create-reminder.dto';
+import { jwtDecode } from "jwt-decode";
 
 dotenv.config();                      // Load environment variables
 const dbCollection = 'user';          // MongoDB collection name
@@ -37,7 +36,7 @@ export class UsersService {
   /*** SERVICE: CREATE NEW USER ************/
   async create(createUserDto: CreateUserDto) {
     const collection = await this.getCollection();
-    const newUser = { user: createUserDto };
+    const newUser = { user: createUserDto };   
     const result = await collection.insertOne(newUser);
     return { message: 'User created successfully', _id: result.insertedId, ...newUser };
   }
@@ -78,100 +77,6 @@ export class UsersService {
     return { message: 'User updated partially' };    // Response to the API caller
   }
 
-//************************** TASKS *************************************/
-  /*** SERVICE: ADD A TASK TO AN USER ************/
-  async addTask(userId: string, task: CreateTaskDto) {
-    const collection = await this.getCollection();
-    const objectId = new ObjectId(userId);
-
-    // Task Id
-    const userDoc = await collection.findOne({ _id: objectId });    // Obtener el usuario
-    if (!userDoc) { throw new NotFoundException(`User with id ${userId} not found`); }
-    const taskId = "t" + ((userDoc.user?.tasks?.length ?? 0) + 1);   // Calcular taskId como la longitud actual del arreglo + 1
-
-    const result = await collection.updateOne(
-      { _id: objectId },
-      { $push: { "user.tasks": { task: { ...task, completed: false }, id: taskId } } } as any // se fuerza el tipo any porque TS valida paths anidados
-    );
-
-    if (result.matchedCount === 0) {
-      throw new NotFoundException(`User with id ${userId} not found`);
-    }
-
-    const updatedUser = await collection.findOne({ _id: objectId });
-
-    if (!updatedUser) {
-      console.warn(`Task was added, but user with id ${userId} could not be retrieved`);
-      return { message: "Task added successfully, but the user could not be returned", };
-    }
-
-    return { message: "Task added successfully", user: updatedUser, };    // Response to the API caller
-  }
-
-  /*** SERVICE: CHECK A COMPLETED TASK ************/
-  async completeTask(userId: string, taskId: string) {
-    const collection = await this.getCollection();
-
-    const result = await collection.findOneAndUpdate(
-      {
-        _id: new ObjectId(userId),
-        "user.tasks.id": taskId // busco la tarea específica
-      },
-      {
-        $set: { "user.tasks.$.task.completed": true } // actualizo el estado a completed
-      }
-    );
-    
-    return "Task marked as completed successfully";
-  }
-
-//************************** REMINDERS *************************************/
-  /*** SERVICE: ADD A REMINDER TO AN USER ************/
-  async addReminder(userId: string, reminder: CreateReminderDto) {
-    const collection = await this.getCollection();
-    const objectId = new ObjectId(userId);
-
-    // Reminder Id
-    const userDoc = await collection.findOne({ _id: objectId });    // Obtener el usuario
-    if (!userDoc) { throw new NotFoundException(`User with id ${userId} not found`); }
-    const reminderId = "r" + ((userDoc.user?.reminders?.length ?? 0) + 1);   // Calcular taskId como la longitud actual del arreglo + 1
-
-    const result = await collection.updateOne(
-      { _id: objectId },
-      { $push: { "user.reminders": { reminder: { ...reminder, completed: false }, id: reminderId } } } as any // se fuerza el tipo any porque TS valida paths anidados
-
-    );
-
-    if (result.matchedCount === 0) {
-      throw new NotFoundException(`User with id ${userId} not found`);
-    }
-
-    const updatedUser = await collection.findOne({ _id: objectId });
-
-    if (!updatedUser) {
-      console.warn(`Reminder was added, but user with id ${userId} could not be retrieved`);
-      return { message: "Reminder added successfully, but the user could not be returned", };
-    }
-
-    return { message: "Reminder added successfully", user: updatedUser, };    // Response to the API caller
-  }
-
-  /*** SERVICE: CHECK A COMPLETED REMINDER ************/
-  async completeReminder(userId: string, reminderId: string) {
-    const collection = await this.getCollection();
-
-    const result = await collection.findOneAndUpdate(
-      {
-        _id: new ObjectId(userId),
-        "user.reminders.id": reminderId // busco la tarea específica
-      },
-      {
-        $set: { "user.reminders.$.reminder.completed": true } // actualizo el estado a completed
-      }
-    );
-    
-    return "Reminder marked as completed successfully";
-  }
   
 //************************** REGISTER *************************************/
   /*** SERVICE: CHECK IF USERNAME OR EMAIL USER ALREADY EXISTS ************/
@@ -189,7 +94,8 @@ export class UsersService {
     // Retornamos específicamente cuál campo está repetido
     const result: { email?: boolean; username?: boolean } = {};
     if (existingData.user.email === email) result.email = true;
-    if (existingData.user.username === username) result.username = true;
+    const decodedUsername = jwtDecode<{ }>(existingData.user.username);
+    if (decodedUsername === username ) result.username = true;
 
     return result;
   }
@@ -205,8 +111,8 @@ export class UsersService {
     }
 
     const nombre = user.user?.name ?? 'User';
-    const username = user.user?.username ?? '(no username)';
-    const password = user.user?.password ?? '(no password)';
+    const username = jwtDecode(user.user?.username) ?? '(no username)';
+    const password = jwtDecode(user.user?.password) ?? '(no password)';
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -233,9 +139,9 @@ export class UsersService {
       `,
     });
 
-    console.log(`Email with password sent to ${email}:`, info.messageId);  // Message on the server console
+    console.log(`Email with password sent to ${email}:`, info.messageId);         // Message on the server console
+    return { message: `Recovery email sent with current password to ${email}` };  // Response to the API caller
 
-    return { message: "Recovery email sent with current password" };  // Response to the API caller
   }
 
 }

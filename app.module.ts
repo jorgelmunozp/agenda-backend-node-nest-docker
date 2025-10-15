@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './src/modules/auth/auth.module';
 import { UsersModule } from './src/modules/users/users.module';
+import { TasksModule } from './src/modules/tasks/tasks.module';
+import { RemindersModule } from './src/modules/reminders/reminders.module';
 
 @Module({
   imports: [
     AuthModule,       // Importa módulo de autenticación
     UsersModule,      // Importa módulo de usuarios
+    TasksModule,      // Importa módulo de tareas
+    RemindersModule,  // Importa módulo de recordatorios
   ],
 })
 export class AppModule {}

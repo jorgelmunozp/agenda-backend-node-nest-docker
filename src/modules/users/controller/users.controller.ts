@@ -3,6 +3,9 @@ import { UsersService } from '../service/users.service';
 import * as dotenv from "dotenv";
 import { ObjectId } from 'mongodb';
 
+import jwtEncode from "jwt-encode";
+const jwtSecretKey = process.env.JWT_SECRET ?? '';
+
 dotenv.config();                  // Load environment variables
 const db = 'users';               // Database route for this controller
 
@@ -22,20 +25,21 @@ export class UsersController {
     return this.usersService.getById(id);
   }
 
+  // Registrar un nuevo usuario
   @Post()
   async addUser(@Body() body: any) {
     // Validaciones mínimas
     if (!body.name) throw new BadRequestException('Name is required');
     if (!body.email) throw new BadRequestException('Email is required');
-    if (!body.username) throw new BadRequestException('Username is required');
+    if (!body.username) throw new BadRequestException('UsernameX is required');
     if (!body.password) throw new BadRequestException('Password is required');
 
     // Construcción explícita del objeto user
     const userData = {
       name: body.name,
       email: body.email,
-      username: body.username,
-      password: body.password,
+      username: jwtEncode(body.username, jwtSecretKey),
+      password: jwtEncode(body.password, jwtSecretKey),
       tasks: Array.isArray(body.tasks) ? body.tasks : [],
       reminders: Array.isArray(body.reminders) ? body.reminders : []
     };
@@ -73,124 +77,11 @@ export class UsersController {
     return this.usersService.update(id, body);
   }
 
-//************************** TASKS *************************************/
-  // Service: Add a Task to a user
-  @Post(':id/tasks')
-  async addTaskToUser(@Param('id') id: string, @Body() taskDto: any) {
-    this.ensureValidObjectId(id);
-
-    if (!taskDto.name || !taskDto.time || !taskDto.date) {
-      throw new BadRequestException('The task must have a name, date and time');
-    }
-
-    const updatedUser = await this.usersService.addTask(id, taskDto);
-
-    if (!updatedUser) {
-      throw new NotFoundException(`No user with id found ${id}`);
-    }
-
-    console.log(`New task added to user ${id}:`, JSON.stringify(taskDto, null, 2));
-
-    return updatedUser;
-  }
-
-  // Service: Get a Task from a user by id
-  @Get(':userId/tasks/:taskId')
-  async getTaskById( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
-    this.ensureValidObjectId(userId);
-
-    // Obtener el usuario
-    const user = await this.usersService.getById(userId);
-    if (!user) {
-      throw new NotFoundException(`No user with id found ${userId}`);
-    }
-
-    // Buscar la tarea dentro del arreglo
-    const task = user.user.tasks.find((t: any) => t.id === taskId);
-    if (!task) {
-      throw new NotFoundException(`No task with id found ${taskId} for user ${userId}`);
-    }
-
-    return task;
-  }
-
-  // Service: Update Task to completed
-  @Patch(':userId/tasks/:taskId')
-  async completeTask( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
-    this.ensureValidObjectId(userId);
-
-    const updatedTask = await this.usersService.completeTask(userId, taskId);
-    if (!updatedTask) {
-      throw new NotFoundException(`No task with id ${taskId} found for user ${userId}`);
-    }
-
-    console.log(`Task ${taskId} for user ${userId} marked as completado:`, updatedTask);
-
-    return updatedTask;
-  }
-
-
-//************************** REMINDERS *************************************/
-  // Service: Add a Reminder to a user
-  @Post(':id/reminders')
-  async addReminderToUser(@Param('id') id: string, @Body() reminderDto: any) {
-    this.ensureValidObjectId(id);
-
-    if (!reminderDto.name || !reminderDto.time || !reminderDto.date) {
-      throw new BadRequestException('The reminder must have a name, date and time');
-    }
-
-    const updatedUser = await this.usersService.addReminder(id, reminderDto);
-
-    if (!updatedUser) {
-      throw new NotFoundException(`No user with id found ${id}`);
-    }
-
-    console.log(`New reminder added to user ${id}:`, JSON.stringify(reminderDto, null, 2));
-
-    return updatedUser;
-  }
-
-  // Service: Get a Reminder from a user by id
-  @Get(':userId/reminders/:reminderId')
-  async getReminderById( @Param('userId') userId: string, @Param('reminderId') reminderId: string ) {
-    this.ensureValidObjectId(userId);
-
-    // Obtener el usuario
-    const user = await this.usersService.getById(userId);
-    if (!user) {
-      throw new NotFoundException(`No user with id found ${userId}`);
-    }
-
-    // Buscar la tarea dentro del arreglo
-    const reminder = user.user.reminders.find((r: any) => r.id === reminderId);
-    if (!reminder) {
-      throw new NotFoundException(`No reminder with id found ${reminderId} for user ${userId}`);
-    }
-
-    return reminder;
-  }
-
-  // Service: Update Reminder to completed
-  @Patch(':userId/reminders/:reminderId')
-  async completeReminder( @Param('userId') userId: string, @Param('reminderId') reminderId: string ) {
-    this.ensureValidObjectId(userId);
-
-    const updatedReminder = await this.usersService.completeReminder(userId, reminderId);
-    if (!updatedReminder) {
-      throw new NotFoundException(`No task with id ${reminderId} found for user ${userId}`);
-    }
-
-    console.log(`Task ${reminderId} for user ${userId} marked as completado:`, updatedReminder);
-
-    return updatedReminder;
-  }
-
 //************************** PASSWORD RECOVERY *************************************/
   // Service: Send password recovery email
   @Post('recover-password')
   async recoverPassword(@Body() body: { email: string }) {
-    if (!body.email) throw new BadRequestException('Email is mandatory');
+    if (!body.email) throw new BadRequestException('Email is requeired');
     return this.usersService.sendPasswordRecoveryEmail(body.email);
   }
 

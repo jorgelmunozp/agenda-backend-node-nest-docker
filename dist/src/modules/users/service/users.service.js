@@ -45,6 +45,7 @@ const connectDB_1 = require("../../../database/connectDB");
 const mongodb_1 = require("mongodb");
 const dotenv = __importStar(require("dotenv"));
 const nodemailer = __importStar(require("nodemailer"));
+const jwt_decode_1 = require("jwt-decode");
 dotenv.config();
 const dbCollection = 'user';
 let UsersService = class UsersService {
@@ -96,64 +97,6 @@ let UsersService = class UsersService {
         }
         return { message: 'User updated partially' };
     }
-    async addTask(userId, task) {
-        const collection = await this.getCollection();
-        const objectId = new mongodb_1.ObjectId(userId);
-        const userDoc = await collection.findOne({ _id: objectId });
-        if (!userDoc) {
-            throw new common_1.NotFoundException(`User with id ${userId} not found`);
-        }
-        const taskId = "t" + ((userDoc.user?.tasks?.length ?? 0) + 1);
-        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.tasks": { task: { ...task, completed: false }, id: taskId } } });
-        if (result.matchedCount === 0) {
-            throw new common_1.NotFoundException(`User with id ${userId} not found`);
-        }
-        const updatedUser = await collection.findOne({ _id: objectId });
-        if (!updatedUser) {
-            console.warn(`Task was added, but user with id ${userId} could not be retrieved`);
-            return { message: "Task added successfully, but the user could not be returned", };
-        }
-        return { message: "Task added successfully", user: updatedUser, };
-    }
-    async completeTask(userId, taskId) {
-        const collection = await this.getCollection();
-        const result = await collection.findOneAndUpdate({
-            _id: new mongodb_1.ObjectId(userId),
-            "user.tasks.id": taskId
-        }, {
-            $set: { "user.tasks.$.task.completed": true }
-        });
-        return "Task marked as completed successfully";
-    }
-    async addReminder(userId, reminder) {
-        const collection = await this.getCollection();
-        const objectId = new mongodb_1.ObjectId(userId);
-        const userDoc = await collection.findOne({ _id: objectId });
-        if (!userDoc) {
-            throw new common_1.NotFoundException(`User with id ${userId} not found`);
-        }
-        const reminderId = "r" + ((userDoc.user?.reminders?.length ?? 0) + 1);
-        const result = await collection.updateOne({ _id: objectId }, { $push: { "user.reminders": { reminder: { ...reminder, completed: false }, id: reminderId } } });
-        if (result.matchedCount === 0) {
-            throw new common_1.NotFoundException(`User with id ${userId} not found`);
-        }
-        const updatedUser = await collection.findOne({ _id: objectId });
-        if (!updatedUser) {
-            console.warn(`Reminder was added, but user with id ${userId} could not be retrieved`);
-            return { message: "Reminder added successfully, but the user could not be returned", };
-        }
-        return { message: "Reminder added successfully", user: updatedUser, };
-    }
-    async completeReminder(userId, reminderId) {
-        const collection = await this.getCollection();
-        const result = await collection.findOneAndUpdate({
-            _id: new mongodb_1.ObjectId(userId),
-            "user.reminders.id": reminderId
-        }, {
-            $set: { "user.reminders.$.reminder.completed": true }
-        });
-        return "Reminder marked as completed successfully";
-    }
     async findByEmailOrUsername(email, username) {
         const collection = await this.getCollection();
         const existingData = await collection.findOne({
@@ -164,7 +107,8 @@ let UsersService = class UsersService {
         const result = {};
         if (existingData.user.email === email)
             result.email = true;
-        if (existingData.user.username === username)
+        const decodedUsername = (0, jwt_decode_1.jwtDecode)(existingData.user.username);
+        if (decodedUsername === username)
             result.username = true;
         return result;
     }
@@ -175,8 +119,8 @@ let UsersService = class UsersService {
             throw new common_1.NotFoundException(`There is no user with the email ${email}`);
         }
         const nombre = user.user?.name ?? 'User';
-        const username = user.user?.username ?? '(no username)';
-        const password = user.user?.password ?? '(no password)';
+        const username = (0, jwt_decode_1.jwtDecode)(user.user?.username) ?? '(no username)';
+        const password = (0, jwt_decode_1.jwtDecode)(user.user?.password) ?? '(no password)';
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: parseInt(process.env.SMTP_PORT ?? "587"),
@@ -201,7 +145,7 @@ let UsersService = class UsersService {
       `,
         });
         console.log(`Email with password sent to ${email}:`, info.messageId);
-        return { message: "Recovery email sent with current password" };
+        return { message: `Recovery email sent with current password to ${email}` };
     }
 };
 exports.UsersService = UsersService;
