@@ -12,18 +12,11 @@ const users_controller_1 = require("./controller/users.controller");
 const users_service_1 = require("./service/users.service");
 const auth_service_1 = require("../auth/service/auth.service");
 const jwt_1 = require("@nestjs/jwt");
-const jwt_2 = require("@nestjs/jwt");
 let UsersModule = class UsersModule {
 };
 exports.UsersModule = UsersModule;
 exports.UsersModule = UsersModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            jwt_2.JwtModule.register({
-                secret: process.env.JWT_SECRET,
-                signOptions: { expiresIn: '1h' },
-            }),
-        ],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService, auth_service_1.AuthService, jwt_1.JwtService],
         exports: [users_service_1.UsersService],

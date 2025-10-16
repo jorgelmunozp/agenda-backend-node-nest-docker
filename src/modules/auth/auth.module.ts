@@ -1,16 +1,3 @@
-// import { Module } from '@nestjs/common';
-// import { HttpModule } from '@nestjs/axios';
-// import { AuthController } from './controller/auth.controller';
-// import { AuthService } from './service/auth.service';
-
-// @Module({
-//   imports: [HttpModule],
-//   controllers: [AuthController],
-//   providers: [AuthService]
-// })
-// export class AuthModule {}
-
-
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';

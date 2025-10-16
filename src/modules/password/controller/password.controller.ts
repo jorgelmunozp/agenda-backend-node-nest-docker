@@ -2,7 +2,6 @@ import { Controller, Get, Post, Put, Patch, Delete, Param, Body, BadRequestExcep
 import { PasswordService } from '../service/password.service';
 import * as dotenv from "dotenv";
 import { UseGuards } from '@nestjs/common';
-import { AuthService } from '../../auth/service/auth.service';
 import { JwtAuthGuard } from '../../auth/jwt/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 
@@ -18,7 +17,7 @@ export class PasswordController {
 
 //************************** PASSWORD *************************************/
   // Service: Send password recovery email
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post('password/recover')
   async recoverPassword(@Body() body: { email: string }) {
     if (!body.email) throw new BadRequestException('Email is requested');
@@ -26,14 +25,14 @@ export class PasswordController {
   }
 
   // Service: Send Token password recovery email
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('password/reset/:token')
   async verifyResetToken(@Param('token') token: string) {
     return this.passwordService.verifyResetToken(token);
   }
 
   // Service: Password update
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch('password/update')
   async updatePassword(@Body() body: { token: string; newPassword: string }) {
     const { token, newPassword } = body;

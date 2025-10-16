@@ -16,17 +16,16 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService
   ) {}
 
 //************************** USERS *************************************/
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
   async getAllUsers() {
     return this.usersService.getAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get(':id')
   async getById(@Param('id') id: string) {
     this.ensureValidObjectId(id);
@@ -34,39 +33,7 @@ export class UsersController {
   }
 
   // Registrar un nuevo usuario
-  // @Post()
-  // async addUser(@Body() body: any) {
-  //   // Validaciones mínimas
-  //   if (!body.name) throw new BadRequestException('Name is required');
-  //   if (!body.email) throw new BadRequestException('Email is required');
-  //   if (!body.username) throw new BadRequestException('UsernameX is required');
-  //   if (!body.password) throw new BadRequestException('Password is required');
-
-  //   // Construcción explícita del objeto user
-  //   const userData = {
-  //     name: body.name,
-  //     email: body.email,
-  //     username: jwtEncode(body.username, jwtSecretKey),
-  //     password: jwtEncode(body.password, jwtSecretKey),
-  //     tasks: Array.isArray(body.tasks) ? body.tasks : [],
-  //     reminders: Array.isArray(body.reminders) ? body.reminders : []
-  //   };
-
-  //   // Valida si ya existe un usuario con el mismo email o username
-  //   const existingData = await this.usersService.findByEmailOrUsername(body.email, body.username);
-
-  //   if (existingData) {
-  //     let message = 'The following fields already exist: ';
-  //     if (existingData.email) message += 'email ';
-  //     if (existingData.username) message += 'username';
-  //     throw new BadRequestException(message.trim());
-  //   }
-  
-  //   console.log("User successfully registered:", userData);
-  //   return this.usersService.create(userData);
-  // }
-
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post()
   async addUser(@Body() body: any) {
     if (!body.name) throw new BadRequestException('Name is required');
@@ -100,21 +67,21 @@ export class UsersController {
     return this.authService.generateToken(user);
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteUser(@Param('id') id: string) {
     this.ensureValidObjectId(id);
     return this.usersService.delete(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Patch(':id')
   async patchUser(@Param('id') id: string, @Body() body: any) {
     this.ensureValidObjectId(id);
     return this.usersService.patch(id, body);
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Put(':id')
   async updateUser(@Param('id') id: string, @Body() body: any) {
     this.ensureValidObjectId(id);
@@ -122,7 +89,7 @@ export class UsersController {
     return this.usersService.update(id, body);
   }
 
-  // Helper privado para validar ObjectId
+  // Helper privado para validar ObjectId de MongoDB
   private ensureValidObjectId(id: string) {
     if (!ObjectId.isValid(id)) {
       throw new BadRequestException(`The provided id is not a valid ObjectId: ${id}`);

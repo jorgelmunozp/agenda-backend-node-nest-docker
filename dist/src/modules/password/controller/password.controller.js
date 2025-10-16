@@ -49,8 +49,6 @@ exports.PasswordController = void 0;
 const common_1 = require("@nestjs/common");
 const password_service_1 = require("../service/password.service");
 const dotenv = __importStar(require("dotenv"));
-const common_2 = require("@nestjs/common");
-const jwt_auth_guard_1 = require("../../auth/jwt/jwt-auth.guard");
 const jwt_1 = require("@nestjs/jwt");
 dotenv.config();
 const db = 'users';
@@ -84,7 +82,6 @@ let PasswordController = class PasswordController {
 };
 exports.PasswordController = PasswordController;
 __decorate([
-    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('password/recover'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -92,7 +89,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PasswordController.prototype, "recoverPassword", null);
 __decorate([
-    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('password/reset/:token'),
     __param(0, (0, common_1.Param)('token')),
     __metadata("design:type", Function),
@@ -100,7 +96,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PasswordController.prototype, "verifyResetToken", null);
 __decorate([
-    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)('password/update'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
