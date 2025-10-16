@@ -11,7 +11,7 @@ export declare class PasswordController {
     }>;
     verifyResetToken(token: string): Promise<{
         message: string;
-        email: any;
+        id: any;
     }>;
     updatePassword(body: {
         token: string;

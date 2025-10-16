@@ -30,11 +30,11 @@ export class PasswordService {
     // A temporary token is generated (15 minutes validity)
     const token = this.jwtService.sign(
       { _id: user._id },
-      { secret: process.env.JWT_SECRET, expiresIn: '15m' }
+      { secret: process.env.JWT_SECRET, expiresIn: 900 }  // 15 minutes
     );
 
     // Link de recuperación
-    const resetLink = `${process.env.FRONTEND_URL}/users/password/reset/${token}`;
+    const resetLink = `${process.env.FRONTEND_URL}/password/reset/${token}`;
 
     // Se configura transporte de correo
     const transporter = nodemailer.createTransport({
@@ -68,12 +68,13 @@ export class PasswordService {
     return { message: `Recovery link sent to ${email}` };
   }
 
+  /*** SERVICE: VERIFY TOKEN ************/
   async verifyResetToken(token: string) {
     if (!token) throw new BadRequestException('Token is required');
 
     try {
       const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
-      return { message: 'Valid token', email: payload.email };
+      return { message: 'Valid token', id: payload._id };
     } catch (err) {
       throw new BadRequestException('Invalid or expired token');
     }

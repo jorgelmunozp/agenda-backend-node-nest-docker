@@ -51,7 +51,6 @@ const password_service_1 = require("../service/password.service");
 const dotenv = __importStar(require("dotenv"));
 const jwt_1 = require("@nestjs/jwt");
 dotenv.config();
-const db = 'users';
 let PasswordController = class PasswordController {
     constructor(passwordService, jwtService) {
         this.passwordService = passwordService;
@@ -82,28 +81,28 @@ let PasswordController = class PasswordController {
 };
 exports.PasswordController = PasswordController;
 __decorate([
-    (0, common_1.Post)('password/recover'),
+    (0, common_1.Post)('recover'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PasswordController.prototype, "recoverPassword", null);
 __decorate([
-    (0, common_1.Get)('password/reset/:token'),
+    (0, common_1.Get)('reset/:token'),
     __param(0, (0, common_1.Param)('token')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PasswordController.prototype, "verifyResetToken", null);
 __decorate([
-    (0, common_1.Patch)('password/update'),
+    (0, common_1.Patch)('update'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PasswordController.prototype, "updatePassword", null);
 exports.PasswordController = PasswordController = __decorate([
-    (0, common_1.Controller)(db),
+    (0, common_1.Controller)('password'),
     __metadata("design:paramtypes", [password_service_1.PasswordService,
         jwt_1.JwtService])
 ], PasswordController);

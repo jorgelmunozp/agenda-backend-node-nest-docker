@@ -66,8 +66,8 @@ let PasswordService = class PasswordService {
         const user = await collection.findOne({ "user.email": email });
         if (!user)
             throw new common_1.NotFoundException(`There is no user with the email ${email}`);
-        const token = this.jwtService.sign({ _id: user._id }, { secret: process.env.JWT_SECRET, expiresIn: '15m' });
-        const resetLink = `${process.env.FRONTEND_URL}/users/password/reset/${token}`;
+        const token = this.jwtService.sign({ _id: user._id }, { secret: process.env.JWT_SECRET, expiresIn: 900 });
+        const resetLink = `${process.env.FRONTEND_URL}/password/reset/${token}`;
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: parseInt(process.env.SMTP_PORT ?? "587"),
@@ -100,7 +100,7 @@ let PasswordService = class PasswordService {
             throw new common_1.BadRequestException('Token is required');
         try {
             const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
-            return { message: 'Valid token', email: payload.email };
+            return { message: 'Valid token', id: payload._id };
         }
         catch (err) {
             throw new common_1.BadRequestException('Invalid or expired token');

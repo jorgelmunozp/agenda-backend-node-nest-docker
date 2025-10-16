@@ -9,7 +9,7 @@ export declare class PasswordService {
     }>;
     verifyResetToken(token: string): Promise<{
         message: string;
-        email: any;
+        id: any;
     }>;
     updatePasswordById(id: string, newPassword: string): Promise<{
         message: string;
