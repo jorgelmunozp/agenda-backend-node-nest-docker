@@ -4,9 +4,8 @@ import { TasksService } from '../../tasks/service/tasks.service';
 import * as dotenv from "dotenv";
 import { ObjectId } from 'mongodb';
 import { CreateTaskDto } from '../dto/create-task.dto';
-
-import jwtEncode from "jwt-encode";
-const jwtSecretKey = process.env.JWT_SECRET ?? '';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/jwt/jwt-auth.guard';
 
 dotenv.config();                  // Load environment variables
 const db = 'users';               // Database route for this controller
@@ -17,6 +16,7 @@ export class TasksController {
 
 //************************** TASKS *************************************/
   // Service: Add a Task to a user
+  @UseGuards(JwtAuthGuard)
   @Post(':id/tasks')
   async addTaskToUser(@Param('id') id: string, @Body() taskDto: CreateTaskDto) {
     this.ensureValidObjectId(id);
@@ -37,6 +37,7 @@ export class TasksController {
   }
 
   // Service: Get all Tasks from a user
+  @UseGuards(JwtAuthGuard)
   @Get(':userId/tasks')
   async getAllTasks(@Param('userId') userId: string) {
     this.ensureValidObjectId(userId);
@@ -58,6 +59,7 @@ export class TasksController {
 
 
   // Service: Get a Task from a user by id
+  @UseGuards(JwtAuthGuard)
   @Get(':userId/tasks/:taskId')
   async getTaskById( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
     this.ensureValidObjectId(userId);
@@ -78,6 +80,7 @@ export class TasksController {
   }
 
   // Service: Update Task to completed
+  @UseGuards(JwtAuthGuard)
   @Patch(':userId/tasks/:taskId')
   async completeTask( @Param('userId') userId: string, @Param('taskId') taskId: string ) {
     this.ensureValidObjectId(userId);

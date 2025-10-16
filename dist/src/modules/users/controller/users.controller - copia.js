@@ -176,7 +176,7 @@ let UsersController = class UsersController {
     }
     async recoverPassword(body) {
         if (!body.email)
-            throw new common_1.BadRequestException('Email is requeired');
+            throw new common_1.BadRequestException('Email is requested');
         return this.usersService.sendPasswordRecoveryEmail(body.email);
     }
     ensureValidObjectId(id) {

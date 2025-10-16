@@ -3,7 +3,6 @@ import { connectDB } from '../../../database/connectDB';
 import { ObjectId } from 'mongodb';
 import * as dotenv from "dotenv";
 import { CreateReminderDto } from '../dto/create-reminder.dto';
-import { jwtDecode } from "jwt-decode";
 
 dotenv.config();                      // Load environment variables
 const dbCollection = 'user';          // MongoDB collection name

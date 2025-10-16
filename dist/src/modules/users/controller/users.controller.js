@@ -44,22 +44,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("../service/users.service");
 const dotenv = __importStar(require("dotenv"));
 const mongodb_1 = require("mongodb");
-const jwt_encode_1 = __importDefault(require("jwt-encode"));
-const jwtSecretKey = process.env.JWT_SECRET ?? '';
+const common_2 = require("@nestjs/common");
+const bcrypt = __importStar(require("bcryptjs"));
+const auth_service_1 = require("../../auth/service/auth.service");
+const jwt_auth_guard_1 = require("../../auth/jwt/jwt-auth.guard");
+const jwt_1 = require("@nestjs/jwt");
 dotenv.config();
 const db = 'users';
 let UsersController = class UsersController {
-    constructor(usersService) {
+    constructor(usersService, authService, jwtService) {
         this.usersService = usersService;
+        this.authService = authService;
+        this.jwtService = jwtService;
     }
     async getAllUsers() {
         return this.usersService.getAll();
@@ -74,17 +76,9 @@ let UsersController = class UsersController {
         if (!body.email)
             throw new common_1.BadRequestException('Email is required');
         if (!body.username)
-            throw new common_1.BadRequestException('UsernameX is required');
+            throw new common_1.BadRequestException('Username is required');
         if (!body.password)
             throw new common_1.BadRequestException('Password is required');
-        const userData = {
-            name: body.name,
-            email: body.email,
-            username: (0, jwt_encode_1.default)(body.username, jwtSecretKey),
-            password: (0, jwt_encode_1.default)(body.password, jwtSecretKey),
-            tasks: Array.isArray(body.tasks) ? body.tasks : [],
-            reminders: Array.isArray(body.reminders) ? body.reminders : []
-        };
         const existingData = await this.usersService.findByEmailOrUsername(body.email, body.username);
         if (existingData) {
             let message = 'The following fields already exist: ';
@@ -94,8 +88,18 @@ let UsersController = class UsersController {
                 message += 'username';
             throw new common_1.BadRequestException(message.trim());
         }
+        const hashedPassword = await bcrypt.hash(body.password, 10);
+        const userData = {
+            name: body.name,
+            email: body.email,
+            username: body.username,
+            password: hashedPassword,
+            tasks: Array.isArray(body.tasks) ? body.tasks : [],
+            reminders: Array.isArray(body.reminders) ? body.reminders : [],
+        };
+        const user = await this.usersService.create(userData);
         console.log("User successfully registered:", userData);
-        return this.usersService.create(userData);
+        return this.authService.generateToken(user);
     }
     async deleteUser(id) {
         this.ensureValidObjectId(id);
@@ -111,11 +115,6 @@ let UsersController = class UsersController {
             throw new common_1.BadRequestException('Name is required');
         return this.usersService.update(id, body);
     }
-    async recoverPassword(body) {
-        if (!body.email)
-            throw new common_1.BadRequestException('Email is requeired');
-        return this.usersService.sendPasswordRecoveryEmail(body.email);
-    }
     ensureValidObjectId(id) {
         if (!mongodb_1.ObjectId.isValid(id)) {
             throw new common_1.BadRequestException(`The provided id is not a valid ObjectId: ${id}`);
@@ -124,12 +123,14 @@ let UsersController = class UsersController {
 };
 exports.UsersController = UsersController;
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getAllUsers", null);
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -137,6 +138,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getById", null);
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -144,6 +146,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "addUser", null);
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -151,6 +154,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "deleteUser", null);
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -159,6 +163,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "patchUser", null);
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -166,15 +171,10 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUser", null);
-__decorate([
-    (0, common_1.Post)('recover-password'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "recoverPassword", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)(db),
-    __metadata("design:paramtypes", [users_service_1.UsersService])
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        auth_service_1.AuthService,
+        jwt_1.JwtService])
 ], UsersController);
 //# sourceMappingURL=users.controller.js.map

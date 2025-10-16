@@ -1,14 +1,15 @@
 import { UsersService } from '../service/users.service';
-import { ObjectId } from 'mongodb';
+import { AuthService } from '../../auth/service/auth.service';
+import { JwtService } from '@nestjs/jwt';
 export declare class UsersController {
     private readonly usersService;
-    constructor(usersService: UsersService);
+    private readonly authService;
+    private readonly jwtService;
+    constructor(usersService: UsersService, authService: AuthService, jwtService: JwtService);
     getAllUsers(): Promise<import("mongodb").WithId<import("bson").Document>[]>;
     getById(id: string): Promise<import("mongodb").WithId<import("bson").Document>>;
     addUser(body: any): Promise<{
-        user: import("../dto/create-user.dto").CreateUserDto;
-        message: string;
-        _id: ObjectId;
+        access_token: string;
     }>;
     deleteUser(id: string): Promise<{
         message: string;
@@ -27,11 +28,6 @@ export declare class UsersController {
             reminders?: import("../../reminders/dto/create-reminder.dto").CreateReminderDto[];
             _id: string;
         };
-    }>;
-    recoverPassword(body: {
-        email: string;
-    }): Promise<{
-        message: string;
     }>;
     private ensureValidObjectId;
 }

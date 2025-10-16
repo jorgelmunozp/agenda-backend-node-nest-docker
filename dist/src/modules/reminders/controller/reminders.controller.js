@@ -52,7 +52,8 @@ const reminders_service_1 = require("../../reminders/service/reminders.service")
 const dotenv = __importStar(require("dotenv"));
 const mongodb_1 = require("mongodb");
 const create_reminder_dto_1 = require("../dto/create-reminder.dto");
-const jwtSecretKey = process.env.JWT_SECRET ?? '';
+const common_2 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../../auth/jwt/jwt-auth.guard");
 dotenv.config();
 const db = 'users';
 let RemindersController = class RemindersController {
@@ -113,6 +114,7 @@ let RemindersController = class RemindersController {
 };
 exports.RemindersController = RemindersController;
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(':id/reminders'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -121,6 +123,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RemindersController.prototype, "addReminderToUser", null);
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':userId/reminders'),
     __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
@@ -128,6 +131,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RemindersController.prototype, "getAllReminders", null);
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':userId/reminders/:reminderId'),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Param)('reminderId')),
@@ -136,6 +140,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RemindersController.prototype, "getReminderById", null);
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)(':userId/reminders/:reminderId'),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Param)('reminderId')),

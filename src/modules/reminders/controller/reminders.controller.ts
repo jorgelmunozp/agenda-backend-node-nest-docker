@@ -4,9 +4,8 @@ import { RemindersService } from '../../reminders/service/reminders.service';
 import * as dotenv from "dotenv";
 import { ObjectId } from 'mongodb';
 import { CreateReminderDto } from '../dto/create-reminder.dto';
-
-import jwtEncode from "jwt-encode";
-const jwtSecretKey = process.env.JWT_SECRET ?? '';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/jwt/jwt-auth.guard';
 
 dotenv.config();                  // Load environment variables
 const db = 'users';               // Database route for this controller
@@ -17,6 +16,7 @@ export class RemindersController {
 
 //************************** REMINDERS *************************************/
   // Service: Add a Reminder to a user
+  @UseGuards(JwtAuthGuard)
   @Post(':id/reminders')
   async addReminderToUser(@Param('id') id: string, @Body() reminderDto: CreateReminderDto) {
     this.ensureValidObjectId(id);
@@ -37,6 +37,7 @@ export class RemindersController {
   }
 
   // Service: Get all Reminders from a user
+  @UseGuards(JwtAuthGuard)
   @Get(':userId/reminders')
   async getAllReminders(@Param('userId') userId: string) {
     this.ensureValidObjectId(userId);
@@ -58,6 +59,7 @@ export class RemindersController {
 
 
   // Service: Get a Reminder from a user by id
+  @UseGuards(JwtAuthGuard)
   @Get(':userId/reminders/:reminderId')
   async getReminderById( @Param('userId') userId: string, @Param('reminderId') reminderId: string ) {
     this.ensureValidObjectId(userId);
@@ -78,6 +80,7 @@ export class RemindersController {
   }
 
   // Service: Update Reminder to completed
+  @UseGuards(JwtAuthGuard)
   @Patch(':userId/reminders/:reminderId')
   async completeReminder( @Param('userId') userId: string, @Param('reminderId') reminderId: string ) {
     this.ensureValidObjectId(userId);

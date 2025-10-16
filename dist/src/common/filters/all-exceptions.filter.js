@@ -17,27 +17,22 @@ let AllExceptionsFilter = AllExceptionsFilter_1 = class AllExceptionsFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const request = ctx.getRequest();
-        let status;
-        let message;
+        let status = common_1.HttpStatus.INTERNAL_SERVER_ERROR;
+        let message = 'Internal server error';
         if (exception instanceof common_1.HttpException) {
             status = exception.getStatus();
-            const exResponse = exception.getResponse();
-            message = (typeof exResponse === 'string')
-                ? { message: exResponse }
-                : exResponse;
+            const res = exception.getResponse();
+            message = typeof res === 'string' ? res : res.message || message;
         }
-        else {
-            status = common_1.HttpStatus.INTERNAL_SERVER_ERROR;
-            message = { message: 'Internal server error' };
+        else if (exception instanceof Error) {
+            message = exception.message;
         }
-        const errorResponse = {
+        response.status(status).json({
             statusCode: status,
             timestamp: new Date().toISOString(),
             path: request.url,
-            ...(message && { error: message }),
-        };
-        this.logger.error(`Error en ${request.method} ${request.url}`, exception);
-        response.status(status).json(errorResponse);
+            error: { message },
+        });
     }
 };
 exports.AllExceptionsFilter = AllExceptionsFilter;

@@ -1,8 +1,11 @@
 import { ObjectId } from 'mongodb';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { JwtService } from '@nestjs/jwt';
 export declare class UsersService {
+    private readonly jwtService;
+    constructor(jwtService: JwtService);
     private readonly collectionName;
-    private getCollection;
+    getCollection(): Promise<import("mongodb").Collection<import("bson").Document>>;
     getAll(): Promise<import("mongodb").WithId<import("bson").Document>[]>;
     getById(id: string): Promise<import("mongodb").WithId<import("bson").Document>>;
     create(createUserDto: CreateUserDto): Promise<{
@@ -32,7 +35,4 @@ export declare class UsersService {
         email?: boolean;
         username?: boolean;
     } | null>;
-    sendPasswordRecoveryEmail(email: string): Promise<{
-        message: string;
-    }>;
 }

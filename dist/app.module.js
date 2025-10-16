@@ -12,6 +12,7 @@ const auth_module_1 = require("./src/modules/auth/auth.module");
 const users_module_1 = require("./src/modules/users/users.module");
 const tasks_module_1 = require("./src/modules/tasks/tasks.module");
 const reminders_module_1 = require("./src/modules/reminders/reminders.module");
+const password_module_1 = require("./src/modules/password/password.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -22,6 +23,7 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             tasks_module_1.TasksModule,
             reminders_module_1.RemindersModule,
+            password_module_1.PasswordModule,
         ],
     })
 ], AppModule);

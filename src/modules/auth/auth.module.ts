@@ -1,11 +1,37 @@
+// import { Module } from '@nestjs/common';
+// import { HttpModule } from '@nestjs/axios';
+// import { AuthController } from './controller/auth.controller';
+// import { AuthService } from './service/auth.service';
+
+// @Module({
+//   imports: [HttpModule],
+//   controllers: [AuthController],
+//   providers: [AuthService]
+// })
+// export class AuthModule {}
+
+
 import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './controller/auth.controller';
 import { AuthService } from './service/auth.service';
+import { JwtStrategy } from './jwt/jwt.strategy';
+import { UsersModule } from '../users/users.module';
+import { jwtConstants } from './jwt/constants';
+
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    UsersModule,
+    PassportModule,
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: Number(process.env.JWT_EXPIRES_IN) || 3600 },
+    }),
+  ],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
-  providers: [AuthService]
+  exports: [AuthService],
 })
 export class AuthModule {}

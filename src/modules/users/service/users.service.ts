@@ -1,19 +1,20 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { connectDB } from '../../../database/connectDB';
 import { ObjectId } from 'mongodb';
 import * as dotenv from "dotenv";
-import * as nodemailer from "nodemailer";
 import { CreateUserDto } from '../dto/create-user.dto';
-import { jwtDecode } from "jwt-decode";
+import { JwtService } from '@nestjs/jwt';
 
 dotenv.config();                      // Load environment variables
 const dbCollection = 'user';          // MongoDB collection name
 
 @Injectable()
 export class UsersService {
+  constructor(private readonly jwtService: JwtService) {}
+
   private readonly collectionName = dbCollection;
 
-  private async getCollection() {
+  public async getCollection() {
     const db = await connectDB();     // Database connection
     return db.collection(this.collectionName);  // Return the specific collection
   }
@@ -94,54 +95,11 @@ export class UsersService {
     // Retornamos específicamente cuál campo está repetido
     const result: { email?: boolean; username?: boolean } = {};
     if (existingData.user.email === email) result.email = true;
-    const decodedUsername = jwtDecode<{ }>(existingData.user.username);
+    const decodedUsername = existingData.user.username;
     if (decodedUsername === username ) result.username = true;
 
     return result;
   }
 
-//************************** PASSWORD RECOVERY *************************************/
-  /*** SERVICE: SEND PASSWORD RECOVERY EMAIL ************/
-  async sendPasswordRecoveryEmail(email: string) {
-    const collection = await this.getCollection();
-    const user = await collection.findOne({ "user.email": email });
-
-    if (!user) {
-      throw new NotFoundException(`There is no user with the email ${email}`);
-    }
-
-    const nombre = user.user?.name ?? 'User';
-    const username = jwtDecode(user.user?.username) ?? '(no username)';
-    const password = jwtDecode(user.user?.password) ?? '(no password)';
-
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT ?? "587"),
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    const info = await transporter.sendMail({
-      from: `"Soporte Agenda" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: "Recuperación de contraseña",
-      html: `
-        <h2>Hola ${nombre},</h2>
-        <p>Hemos recibido una solicitud de recuperación de contraseña para tu cuenta.</p>
-        <p><strong>Usuario:</strong> ${username}</p>
-        <p><strong>Contraseña actual:</strong> ${password}</p>
-        <br />
-        <p>Si no solicitaste esta información, puedes ignorar este mensaje.</p>
-        <p style="color: gray; font-size: 12px;">Este es un correo generado automáticamente, no respondas a este mensaje.</p>
-      `,
-    });
-
-    console.log(`Email with password sent to ${email}:`, info.messageId);         // Message on the server console
-    return { message: `Recovery email sent with current password to ${email}` };  // Response to the API caller
-
-  }
-
+  
 }

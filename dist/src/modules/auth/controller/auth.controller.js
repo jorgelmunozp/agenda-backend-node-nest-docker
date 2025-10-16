@@ -21,8 +21,11 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     async login(loginDto) {
-        console.log('Login received:', loginDto);
-        return this.authService.login(loginDto);
+        const user = await this.authService.validateUser(loginDto);
+        if (!user)
+            throw new common_1.UnauthorizedException('Credenciales inválidas');
+        const token = await this.authService.generateToken(user);
+        return token;
     }
 };
 exports.AuthController = AuthController;

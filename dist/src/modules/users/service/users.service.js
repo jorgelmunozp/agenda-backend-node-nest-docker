@@ -38,18 +38,21 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const connectDB_1 = require("../../../database/connectDB");
 const mongodb_1 = require("mongodb");
 const dotenv = __importStar(require("dotenv"));
-const nodemailer = __importStar(require("nodemailer"));
-const jwt_decode_1 = require("jwt-decode");
+const jwt_1 = require("@nestjs/jwt");
 dotenv.config();
 const dbCollection = 'user';
 let UsersService = class UsersService {
-    constructor() {
+    constructor(jwtService) {
+        this.jwtService = jwtService;
         this.collectionName = dbCollection;
     }
     async getCollection() {
@@ -107,49 +110,15 @@ let UsersService = class UsersService {
         const result = {};
         if (existingData.user.email === email)
             result.email = true;
-        const decodedUsername = (0, jwt_decode_1.jwtDecode)(existingData.user.username);
+        const decodedUsername = existingData.user.username;
         if (decodedUsername === username)
             result.username = true;
         return result;
     }
-    async sendPasswordRecoveryEmail(email) {
-        const collection = await this.getCollection();
-        const user = await collection.findOne({ "user.email": email });
-        if (!user) {
-            throw new common_1.NotFoundException(`There is no user with the email ${email}`);
-        }
-        const nombre = user.user?.name ?? 'User';
-        const username = (0, jwt_decode_1.jwtDecode)(user.user?.username) ?? '(no username)';
-        const password = (0, jwt_decode_1.jwtDecode)(user.user?.password) ?? '(no password)';
-        const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT ?? "587"),
-            secure: false,
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-        });
-        const info = await transporter.sendMail({
-            from: `"Soporte Agenda" <${process.env.SMTP_USER}>`,
-            to: email,
-            subject: "Recuperación de contraseña",
-            html: `
-        <h2>Hola ${nombre},</h2>
-        <p>Hemos recibido una solicitud de recuperación de contraseña para tu cuenta.</p>
-        <p><strong>Usuario:</strong> ${username}</p>
-        <p><strong>Contraseña actual:</strong> ${password}</p>
-        <br />
-        <p>Si no solicitaste esta información, puedes ignorar este mensaje.</p>
-        <p style="color: gray; font-size: 12px;">Este es un correo generado automáticamente, no respondas a este mensaje.</p>
-      `,
-        });
-        console.log(`Email with password sent to ${email}:`, info.messageId);
-        return { message: `Recovery email sent with current password to ${email}` };
-    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [jwt_1.JwtService])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

@@ -11,13 +11,14 @@ const common_1 = require("@nestjs/common");
 const reminders_controller_1 = require("./controller/reminders.controller");
 const reminders_service_1 = require("./service/reminders.service");
 const users_service_1 = require("../users/service/users.service");
+const jwt_1 = require("@nestjs/jwt");
 let RemindersModule = class RemindersModule {
 };
 exports.RemindersModule = RemindersModule;
 exports.RemindersModule = RemindersModule = __decorate([
     (0, common_1.Module)({
         controllers: [reminders_controller_1.RemindersController],
-        providers: [reminders_service_1.RemindersService, users_service_1.UsersService],
+        providers: [reminders_service_1.RemindersService, users_service_1.UsersService, jwt_1.JwtService],
         exports: [reminders_service_1.RemindersService],
     })
 ], RemindersModule);
