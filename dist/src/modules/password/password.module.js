@@ -21,7 +21,7 @@ exports.PasswordModule = PasswordModule = __decorate([
         imports: [
             jwt_2.JwtModule.register({
                 secret: process.env.JWT_SECRET,
-                signOptions: { expiresIn: '1h' },
+                signOptions: { expiresIn: 3600 },
             }),
         ],
         controllers: [password_controller_1.PasswordController],

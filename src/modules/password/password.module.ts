@@ -9,7 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [
     JwtModule.register({                    // Registro del módulo JWT con la clave secreta y expiración
       secret: process.env.JWT_SECRET,       // Variable de entorno con secret
-      signOptions: { expiresIn: '1h' },     // Tiempo ajustable
+      signOptions: { expiresIn: 3600 },     // Tiempo token 1 hora
     }),
   ],
   controllers: [PasswordController],

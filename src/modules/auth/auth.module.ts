@@ -7,7 +7,6 @@ import { JwtStrategy } from './jwt/jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { jwtConstants } from './jwt/constants';
 
-
 @Module({
   imports: [
     UsersModule,
