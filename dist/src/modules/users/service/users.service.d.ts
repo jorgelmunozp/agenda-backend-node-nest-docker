@@ -1,17 +1,24 @@
 import { ObjectId } from 'mongodb';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { JwtService } from '@nestjs/jwt';
 export declare class UsersService {
-    private readonly jwtService;
-    constructor(jwtService: JwtService);
+    constructor();
     private readonly collectionName;
     getCollection(): Promise<import("mongodb").Collection<import("bson").Document>>;
     getAll(): Promise<import("mongodb").WithId<import("bson").Document>[]>;
     getById(id: string): Promise<import("mongodb").WithId<import("bson").Document>>;
     create(createUserDto: CreateUserDto): Promise<{
-        user: CreateUserDto;
         message: string;
-        _id: ObjectId;
+        user: {
+            user: {
+                name: string;
+                email: string;
+                username: string;
+                password: string;
+                tasks: import("../../tasks/dto/create-task.dto").CreateTaskDto[];
+                reminders: import("../../reminders/dto/create-reminder.dto").CreateReminderDto[];
+            };
+            _id: ObjectId;
+        };
     }>;
     delete(id: string): Promise<{
         message: string;

@@ -13,12 +13,14 @@ const users_module_1 = require("./src/modules/users/users.module");
 const tasks_module_1 = require("./src/modules/tasks/tasks.module");
 const reminders_module_1 = require("./src/modules/reminders/reminders.module");
 const password_module_1 = require("./src/modules/password/password.module");
+const config_1 = require("@nestjs/config");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            config_1.ConfigModule.forRoot({ isGlobal: true }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             tasks_module_1.TasksModule,

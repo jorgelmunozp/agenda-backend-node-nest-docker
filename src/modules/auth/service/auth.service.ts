@@ -27,9 +27,18 @@ export class AuthService {
 
   /*** SERVICE: GENERATE JWT TOKEN ************/
   async generateToken(user: any) {
-    const payload = { sub: user._id || user.id, username: user.username };
+    console.log('Generating token for user:', user);
+    
+    const payload = { sub: user._id || user.id, username: user.user.username };
+    console.log('payload:', payload);
+    console.log('jwt secret:', process.env.JWT_SECRET);
+
+    const token = this.jwtService.sign(payload);
+    console.log('Generated token:', token);
+
     return {
-      access_token: this.jwtService.sign(payload),
+      // access_token: this.jwtService.sign(payload),
+      access_token: token,
     };
   }
 

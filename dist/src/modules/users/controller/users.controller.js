@@ -51,9 +51,9 @@ const users_service_1 = require("../service/users.service");
 const dotenv = __importStar(require("dotenv"));
 const mongodb_1 = require("mongodb");
 const common_2 = require("@nestjs/common");
-const bcrypt = __importStar(require("bcryptjs"));
 const auth_service_1 = require("../../auth/service/auth.service");
 const jwt_auth_guard_1 = require("../../auth/jwt/jwt-auth.guard");
+const create_user_dto_1 = require("../dto/create-user.dto");
 dotenv.config();
 const db = 'users';
 let UsersController = class UsersController {
@@ -69,35 +69,11 @@ let UsersController = class UsersController {
         return this.usersService.getById(id);
     }
     async addUser(body) {
-        if (!body.name)
-            throw new common_1.BadRequestException('Name is required');
-        if (!body.email)
-            throw new common_1.BadRequestException('Email is required');
-        if (!body.username)
-            throw new common_1.BadRequestException('Username is required');
-        if (!body.password)
-            throw new common_1.BadRequestException('Password is required');
-        const existingData = await this.usersService.findByEmailOrUsername(body.email, body.username);
-        if (existingData) {
-            let message = 'The following fields already exist: ';
-            if (existingData.email)
-                message += 'email ';
-            if (existingData.username)
-                message += 'username';
-            throw new common_1.BadRequestException(message.trim());
-        }
-        const hashedPassword = await bcrypt.hash(body.password, 10);
-        const userData = {
-            name: body.name,
-            email: body.email,
-            username: body.username,
-            password: hashedPassword,
-            tasks: Array.isArray(body.tasks) ? body.tasks : [],
-            reminders: Array.isArray(body.reminders) ? body.reminders : [],
-        };
-        const user = await this.usersService.create(userData);
-        console.log("User successfully registered:", userData);
-        return this.authService.generateToken(user);
+        const user = (await this.usersService.create(body)).user;
+        console.log('user!!!!!!!!!:', user);
+        const token = await this.authService.generateToken(user);
+        console.log("token!!!!!!!!!:", token);
+        return token;
     }
     async deleteUser(id) {
         this.ensureValidObjectId(id);
@@ -121,7 +97,6 @@ let UsersController = class UsersController {
 };
 exports.UsersController = UsersController;
 __decorate([
-    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -136,11 +111,10 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getById", null);
 __decorate([
-    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "addUser", null);
 __decorate([

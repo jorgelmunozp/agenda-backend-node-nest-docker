@@ -3,14 +3,17 @@ import { connectDB } from '../../../database/connectDB';
 import { ObjectId } from 'mongodb';
 import * as dotenv from "dotenv";
 import { CreateUserDto } from '../dto/create-user.dto';
-import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 
 dotenv.config();                      // Load environment variables
 const dbCollection = 'user';          // MongoDB collection name
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    // private readonly jwtService: JwtService,
+    // private readonly authService: AuthService,
+  ) {}
 
   private readonly collectionName = dbCollection;
 
@@ -35,11 +38,51 @@ export class UsersService {
   }
 
   /*** SERVICE: CREATE NEW USER ************/
+  // async create(createUserDto: CreateUserDto) {
+  //   const collection = await this.getCollection();
+  //   const newUser = { user: createUserDto };   
+  //   const result = await collection.insertOne(newUser);
+  //   return { message: 'User created successfully', _id: result.insertedId, ...newUser };
+  // }
+
+  /*** SERVICE: CREATE NEW USER ************/
   async create(createUserDto: CreateUserDto) {
     const collection = await this.getCollection();
-    const newUser = { user: createUserDto };   
-    const result = await collection.insertOne(newUser);
-    return { message: 'User created successfully', _id: result.insertedId, ...newUser };
+
+    // // Validaciones básicas
+    // if (!createUserDto.name) throw new BadRequestException('Name is required');
+    // if (!createUserDto.email) throw new BadRequestException('Email is required');
+    // if (!createUserDto.username) throw new BadRequestException('Username is required');
+    // if (!createUserDto.password) throw new BadRequestException('Password is required');
+
+    // Verificar duplicados
+    const existingData = await this.findByEmailOrUsername(createUserDto.email, createUserDto.username);
+    
+    if (existingData) {
+      let message = 'The following fields already exist: ';
+      if (existingData.email) message += 'email ';
+      if (existingData.username) message += 'username';
+      throw new BadRequestException(message.trim());
+    }
+
+    // Hashear contraseña
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    // Preparar datos
+    const userData = {
+      user: {
+        name: createUserDto.name,
+        email: createUserDto.email,
+        username: createUserDto.username,
+        password: hashedPassword,
+        tasks: Array.isArray(createUserDto.tasks) ? createUserDto.tasks : [],
+        reminders: Array.isArray(createUserDto.reminders) ? createUserDto.reminders : [],
+      }
+    };
+
+    // Insertar en la base de datos
+    const result = await collection.insertOne(userData);
+    return { message: 'User created successfully', user: {  _id: result.insertedId, ...userData } };
   }
 
   /*** SERVICE: DELETE USER ************/

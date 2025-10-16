@@ -47,12 +47,11 @@ const common_1 = require("@nestjs/common");
 const connectDB_1 = require("../../../database/connectDB");
 const mongodb_1 = require("mongodb");
 const dotenv = __importStar(require("dotenv"));
-const jwt_1 = require("@nestjs/jwt");
+const bcrypt = __importStar(require("bcryptjs"));
 dotenv.config();
 const dbCollection = 'user';
 let UsersService = class UsersService {
-    constructor(jwtService) {
-        this.jwtService = jwtService;
+    constructor() {
         this.collectionName = dbCollection;
     }
     async getCollection() {
@@ -72,9 +71,28 @@ let UsersService = class UsersService {
     }
     async create(createUserDto) {
         const collection = await this.getCollection();
-        const newUser = { user: createUserDto };
-        const result = await collection.insertOne(newUser);
-        return { message: 'User created successfully', _id: result.insertedId, ...newUser };
+        const existingData = await this.findByEmailOrUsername(createUserDto.email, createUserDto.username);
+        if (existingData) {
+            let message = 'The following fields already exist: ';
+            if (existingData.email)
+                message += 'email ';
+            if (existingData.username)
+                message += 'username';
+            throw new common_1.BadRequestException(message.trim());
+        }
+        const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+        const userData = {
+            user: {
+                name: createUserDto.name,
+                email: createUserDto.email,
+                username: createUserDto.username,
+                password: hashedPassword,
+                tasks: Array.isArray(createUserDto.tasks) ? createUserDto.tasks : [],
+                reminders: Array.isArray(createUserDto.reminders) ? createUserDto.reminders : [],
+            }
+        };
+        const result = await collection.insertOne(userData);
+        return { message: 'User created successfully', user: { _id: result.insertedId, ...userData } };
     }
     async delete(id) {
         const collection = await this.getCollection();
@@ -119,6 +137,6 @@ let UsersService = class UsersService {
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [jwt_1.JwtService])
+    __metadata("design:paramtypes", [])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map
