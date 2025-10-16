@@ -13,7 +13,6 @@ const db = 'users';               // Database route for this controller
 export class PasswordController {
   constructor(
     private readonly passwordService: PasswordService,
-    private readonly authService: AuthService,
     private readonly jwtService: JwtService
   ) {}
 

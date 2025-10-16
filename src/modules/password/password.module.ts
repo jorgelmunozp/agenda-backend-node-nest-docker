@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PasswordController } from './controller/password.controller';
 import { PasswordService } from './service/password.service';
-import { AuthService } from '../auth/service/auth.service';
 import { UsersService } from '../users/service/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtModule } from '@nestjs/jwt';
@@ -14,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [PasswordController],
-  providers: [PasswordService, UsersService, AuthService, JwtService],
+  providers: [PasswordService, UsersService, JwtService],
   exports: [PasswordService],                  // por si otro módulo lo necesita
 })
 export class PasswordModule {}

@@ -50,15 +50,13 @@ const common_1 = require("@nestjs/common");
 const password_service_1 = require("../service/password.service");
 const dotenv = __importStar(require("dotenv"));
 const common_2 = require("@nestjs/common");
-const auth_service_1 = require("../../auth/service/auth.service");
 const jwt_auth_guard_1 = require("../../auth/jwt/jwt-auth.guard");
 const jwt_1 = require("@nestjs/jwt");
 dotenv.config();
 const db = 'users';
 let PasswordController = class PasswordController {
-    constructor(passwordService, authService, jwtService) {
+    constructor(passwordService, jwtService) {
         this.passwordService = passwordService;
-        this.authService = authService;
         this.jwtService = jwtService;
     }
     async recoverPassword(body) {
@@ -112,7 +110,6 @@ __decorate([
 exports.PasswordController = PasswordController = __decorate([
     (0, common_1.Controller)(db),
     __metadata("design:paramtypes", [password_service_1.PasswordService,
-        auth_service_1.AuthService,
         jwt_1.JwtService])
 ], PasswordController);
 //# sourceMappingURL=password.controller.js.map

@@ -10,7 +10,6 @@ exports.PasswordModule = void 0;
 const common_1 = require("@nestjs/common");
 const password_controller_1 = require("./controller/password.controller");
 const password_service_1 = require("./service/password.service");
-const auth_service_1 = require("../auth/service/auth.service");
 const users_service_1 = require("../users/service/users.service");
 const jwt_1 = require("@nestjs/jwt");
 const jwt_2 = require("@nestjs/jwt");
@@ -26,7 +25,7 @@ exports.PasswordModule = PasswordModule = __decorate([
             }),
         ],
         controllers: [password_controller_1.PasswordController],
-        providers: [password_service_1.PasswordService, users_service_1.UsersService, auth_service_1.AuthService, jwt_1.JwtService],
+        providers: [password_service_1.PasswordService, users_service_1.UsersService, jwt_1.JwtService],
         exports: [password_service_1.PasswordService],
     })
 ], PasswordModule);
