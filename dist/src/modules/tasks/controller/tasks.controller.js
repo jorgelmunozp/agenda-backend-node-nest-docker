@@ -121,7 +121,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TasksController.prototype, "addTaskToUser", null);
 __decorate([
-    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':userId/tasks'),
     __param(0, (0, common_1.Param)('userId')),
     __param(1, (0, common_1.Query)('page')),
