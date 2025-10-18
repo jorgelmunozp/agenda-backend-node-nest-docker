@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { CreateUserDto } from '../dto/create-user.dto';
 export declare class UsersService {
-    constructor();
     private readonly collectionName;
     getCollection(): Promise<import("mongodb").Collection<import("bson").Document>>;
     getAll(): Promise<import("mongodb").WithId<import("bson").Document>[]>;

@@ -3,6 +3,7 @@ import { CreateReminderDto } from '../../reminders/dto/create-reminder.dto';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserDto {
+  @IsNotEmpty()
   name: string;
   @IsEmail()
   @IsNotEmpty()

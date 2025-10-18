@@ -18,7 +18,7 @@ export class UsersController {
   ) {}
 
 //************************** USERS *************************************/
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllUsers() {
     return this.usersService.getAll();
@@ -32,50 +32,11 @@ export class UsersController {
   }
 
   // Registrar un nuevo usuario
-  // @Post()
-  // async addUser(@Body() body: any) {
-  //   if (!body.name) throw new BadRequestException('Name is required');
-  //   if (!body.email) throw new BadRequestException('Email is required');
-  //   if (!body.username) throw new BadRequestException('Username is required');
-  //   if (!body.password) throw new BadRequestException('Password is required');
-
-  //   const existingData = await this.usersService.findByEmailOrUsername(body.email, body.username);
-  //   if (existingData) {
-  //     let message = 'The following fields already exist: ';
-  //     if (existingData.email) message += 'email ';
-  //     if (existingData.username) message += 'username';
-  //     throw new BadRequestException(message.trim());
-  //   }
-
-  //   const hashedPassword = await bcrypt.hash(body.password, 10);
-
-  //   const userData = {
-  //     name: body.name,
-  //     email: body.email,
-  //     username: body.username,
-  //     password: hashedPassword,
-  //     tasks: Array.isArray(body.tasks) ? body.tasks : [],
-  //     reminders: Array.isArray(body.reminders) ? body.reminders : [],
-  //   };
-
-  //   const user = await this.usersService.create(userData);
-
-  //   console.log("User successfully registered:", userData);
-  //   // genera token automático al registrarse
-  //   return this.authService.generateToken(user);
-  // }
-
-  // Registrar un nuevo usuario
   @Post()
   async addUser(@Body() body: CreateUserDto) {
     const user = (await this.usersService.create(body)).user;
-    
-    // return this.authService.generateToken(user); // Generar token automático al registrarse
-
-console.log('user!!!!!!!!!:', user);
-
     const token = await this.authService.generateToken(user);
-console.log("token!!!!!!!!!:", token);
+
     return token;
   }
 

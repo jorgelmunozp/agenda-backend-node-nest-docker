@@ -70,9 +70,7 @@ let UsersController = class UsersController {
     }
     async addUser(body) {
         const user = (await this.usersService.create(body)).user;
-        console.log('user!!!!!!!!!:', user);
         const token = await this.authService.generateToken(user);
-        console.log("token!!!!!!!!!:", token);
         return token;
     }
     async deleteUser(id) {
@@ -97,6 +95,7 @@ let UsersController = class UsersController {
 };
 exports.UsersController = UsersController;
 __decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),

@@ -10,11 +10,6 @@ const dbCollection = 'user';          // MongoDB collection name
 
 @Injectable()
 export class UsersService {
-  constructor(
-    // private readonly jwtService: JwtService,
-    // private readonly authService: AuthService,
-  ) {}
-
   private readonly collectionName = dbCollection;
 
   public async getCollection() {
@@ -38,22 +33,8 @@ export class UsersService {
   }
 
   /*** SERVICE: CREATE NEW USER ************/
-  // async create(createUserDto: CreateUserDto) {
-  //   const collection = await this.getCollection();
-  //   const newUser = { user: createUserDto };   
-  //   const result = await collection.insertOne(newUser);
-  //   return { message: 'User created successfully', _id: result.insertedId, ...newUser };
-  // }
-
-  /*** SERVICE: CREATE NEW USER ************/
   async create(createUserDto: CreateUserDto) {
     const collection = await this.getCollection();
-
-    // // Validaciones básicas
-    // if (!createUserDto.name) throw new BadRequestException('Name is required');
-    // if (!createUserDto.email) throw new BadRequestException('Email is required');
-    // if (!createUserDto.username) throw new BadRequestException('Username is required');
-    // if (!createUserDto.password) throw new BadRequestException('Password is required');
 
     // Verificar duplicados
     const existingData = await this.findByEmailOrUsername(createUserDto.email, createUserDto.username);

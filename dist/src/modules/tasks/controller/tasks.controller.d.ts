@@ -12,7 +12,15 @@ export declare class TasksController {
         message: string;
         user: import("mongodb").WithId<import("bson").Document>;
     }>;
-    getAllTasks(userId: string): Promise<any>;
+    getAllTasks(userId: string, page?: string, limit?: string, name?: string): Promise<{
+        data: any;
+        meta: {
+            total: any;
+            page: number;
+            limit: number;
+            last_page: number;
+        };
+    }>;
     getTaskById(userId: string, taskId: string): Promise<any>;
     completeTask(userId: string, taskId: string): Promise<string>;
     private ensureValidObjectId;
